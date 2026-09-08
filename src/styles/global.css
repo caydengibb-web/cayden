@@ -17,7 +17,10 @@
   --btn-bg: var(--orange);
   --btn-text: #0b0b0b;
   --btn-hover: var(--orange-dark);
-  --label: var(--orange);
+  /* Orange on the bright ground is too light to read at text sizes,
+     so labels and the hero claim use deeper cuts of it there. */
+  --label: #b9430a;
+  --accent: #d9530b;
 
   --font-display: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
@@ -42,6 +45,7 @@
   --rule: rgba(243, 239, 232, 0.14);
   --surface: #161513;
   --label: var(--orange);
+  --accent: var(--orange);
 }
 
 .theme-orange {
@@ -51,6 +55,7 @@
   --rule: rgba(11, 11, 11, 0.22);
   --surface: #f07a35;
   --label: #0b0b0b;
+  --accent: #0b0b0b;
   --btn-bg: #0b0b0b;
   --btn-text: #f3efe8;
   --btn-hover: #1c1a17;
@@ -149,7 +154,7 @@ h2 {
 
 /* The claim in the hero, set in orange. */
 .accent {
-  color: var(--orange);
+  color: var(--accent);
 }
 
 h3 {
