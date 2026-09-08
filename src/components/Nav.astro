@@ -24,6 +24,7 @@ import { site } from '../data/site';
     right: 0;
     z-index: 10;
     padding-top: 22px;
+    color: #f3efe8;
   }
   .nav__row {
     display: flex;
@@ -46,15 +47,22 @@ import { site } from '../data/site';
     padding: 0;
     gap: 28px;
     font-size: 15px;
-    color: var(--muted);
+    color: rgba(243, 239, 232, 0.7);
   }
   .nav__links a:hover {
-    color: var(--text);
+    color: #f3efe8;
   }
   .nav__cta {
     min-height: 44px;
     padding: 0 18px;
     font-size: 15px;
+    background: var(--orange);
+    color: #0b0b0b;
+    border-color: var(--orange);
+  }
+  .nav__cta:hover {
+    background: var(--orange-dark);
+    border-color: var(--orange-dark);
   }
   @media (min-width: 900px) {
     .nav__links {

@@ -19,9 +19,9 @@ const stats = approvedStats();
 <style>
   .stats {
     display: grid;
-    gap: 32px;
-    margin: 64px 0 0;
-    padding-top: 40px;
+    gap: 40px;
+    margin: 96px 0 0;
+    padding-top: 48px;
     border-top: 1px solid var(--rule);
   }
   @media (min-width: 720px) {
@@ -37,15 +37,17 @@ const stats = approvedStats();
     margin: 0;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(40px, 5vw, 64px);
-    letter-spacing: -0.03em;
-    line-height: 1;
+    font-size: clamp(72px, 10vw, 148px);
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    color: var(--orange);
+    font-variant-numeric: tabular-nums;
     order: 1;
   }
   .stat__label {
-    margin-top: 10px;
-    font-size: 15px;
+    margin-top: 14px;
+    font-size: 17px;
     order: 2;
-    max-width: 24ch;
+    max-width: 22ch;
   }
 </style>

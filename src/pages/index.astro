@@ -20,7 +20,7 @@ const hero = site.videos.heroLoop;
 >
   <Nav />
 
-  <section class="hero">
+  <section class="hero theme-dark">
     <video
       class="hero__video"
       data-hero-video
@@ -40,26 +40,33 @@ const hero = site.videos.heroLoop;
     <div class="hero__grain" aria-hidden="true"></div>
 
     <div class="wrap hero__content" data-hero-text>
-      <h1 data-reveal-lines>Your company is bigger than it looks online.</h1>
-      <p class="lead hero__sub" data-reveal>
-        Real Reach Content makes video for established companies that never built a marketing team.
-        We film it, write it, post it, and run the ads. You show up on camera a few hours a month.
-      </p>
-      <div class="hero__cta" data-reveal>
-        <a href="/call" class="btn btn--primary">Book a call</a>
-        {trusted && <p class="hero__trust muted">{trusted}</p>}
+      <h1 data-reveal-lines>
+        <span class="hl">Your company is</span>
+        <span class="hl accent">bigger than it looks online.</span>
+      </h1>
+      <div class="hero__row">
+        <p class="lead hero__sub" data-reveal>
+          Real Reach Content makes video for established companies that never built a marketing
+          team. We film it, write it, post it, and run the ads. You show up on camera a few hours a
+          month.
+        </p>
+        <div class="hero__cta" data-reveal>
+          <a href="/call" class="btn btn--primary btn--lg">Book a call</a>
+          {trusted && <p class="hero__trust">{trusted}</p>}
+        </div>
       </div>
     </div>
+    <div class="hero__edge" aria-hidden="true"></div>
   </section>
 
   <main>
     <section class="section" id="problem">
-      <div class="wrap split">
-        <div data-reveal-lines>
+      <div class="wrap">
+        <div data-reveal-lines class="big-head">
           <span class="label">The problem</span>
           <h2>Your marketing is someone's side job.</h2>
         </div>
-        <p class="lead measure" data-reveal>
+        <p class="lead lead--big measure offset" data-reveal>
           Maybe it's an intern. Maybe it's the office manager between everything else. There is no
           plan. Posts go out when someone remembers. The last photo of your shop was taken on a phone
           in bad light. Meanwhile you have a hundred employees and clients across the country. Anyone
@@ -111,7 +118,7 @@ const hero = site.videos.heroLoop;
       </div>
     </section>
 
-    <section class="section" id="work">
+    <section class="section theme-dark" id="work">
       <div class="wrap">
         <div data-reveal-lines class="section-head">
           <span class="label">Work</span>
@@ -121,7 +128,7 @@ const hero = site.videos.heroLoop;
       </div>
     </section>
 
-    <section class="section" id="results">
+    <section class="section theme-dark section--tight" id="results">
       <div class="wrap">
         <div data-reveal-lines class="section-head">
           <span class="label">Results</span>
@@ -132,13 +139,13 @@ const hero = site.videos.heroLoop;
       </div>
     </section>
 
-    <section class="section" id="local">
-      <div class="wrap split">
-        <div data-reveal-lines>
+    <section class="section theme-orange" id="local">
+      <div class="wrap">
+        <div data-reveal-lines class="big-head">
           <span class="label">Sarnia, Ontario</span>
-          <h2>We're here. We show up.</h2>
+          <h2 class="giant">We're here.<br />We show up.</h2>
         </div>
-        <p class="lead measure" data-reveal>
+        <p class="lead lead--big measure offset" data-reveal>
           We come to your shop, your yard, your office. We film your people where they work. Agencies
           you hire off the internet send a brief and hope for the best. We drive over.
         </p>
@@ -154,14 +161,16 @@ const hero = site.videos.heroLoop;
     <section class="section final" id="book">
       <div class="wrap">
         <div data-reveal-lines>
-          <h2>Book a call with Cayden.</h2>
+          <h2 class="giant">Book a call with Cayden.</h2>
         </div>
-        <p class="lead measure final__body" data-reveal>
-          Twenty minutes. We look at what you have now, tell you what we'd do, and if it fits you get
-          a plan and a price. No slide deck.
-        </p>
-        <div data-reveal class="final__cta">
-          <a href="/call" class="btn btn--primary">Book a call</a>
+        <div class="final__row">
+          <p class="lead lead--big measure" data-reveal>
+            Twenty minutes. We look at what you have now, tell you what we'd do, and if it fits you get
+            a plan and a price. No slide deck.
+          </p>
+          <div data-reveal class="final__cta">
+            <a href="/call" class="btn btn--primary btn--lg">Book a call</a>
+          </div>
         </div>
       </div>
     </section>
@@ -198,9 +207,9 @@ const hero = site.videos.heroLoop;
     z-index: -2;
     background: linear-gradient(
       to bottom,
-      rgba(11, 11, 11, 0.35) 0%,
-      rgba(11, 11, 11, 0.55) 55%,
-      rgba(11, 11, 11, 0.92) 100%
+      rgba(11, 11, 11, 0.3) 0%,
+      rgba(11, 11, 11, 0.5) 50%,
+      rgba(11, 11, 11, 0.9) 100%
     );
   }
   /* Faint film grain. One tiny SVG, no animation. */
@@ -208,42 +217,96 @@ const hero = site.videos.heroLoop;
     position: absolute;
     inset: 0;
     z-index: -1;
-    opacity: 0.06;
+    opacity: 0.07;
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 160px 160px;
+  }
+  .hero__edge {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 4px;
+    background: var(--orange);
   }
   .hero__content {
     position: relative;
   }
   .hero h1 {
-    max-width: 14ch;
+    max-width: 12ch;
+  }
+  .hl {
+    display: inline-block;
+  }
+  .hero__row {
+    display: grid;
+    gap: 32px;
+    margin-top: 40px;
+  }
+  @media (min-width: 900px) {
+    .hero__row {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+      gap: 48px;
+      align-items: end;
+      margin-top: 56px;
+    }
   }
   .hero__sub {
     max-width: var(--measure);
-    margin-top: 32px;
   }
   .hero__cta {
-    margin-top: 40px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 16px 28px;
   }
+  @media (min-width: 900px) {
+    .hero__cta {
+      justify-content: flex-end;
+    }
+  }
   .hero__trust {
     font-size: 15px;
-    max-width: 40ch;
+    max-width: 34ch;
+    color: rgba(243, 239, 232, 0.7);
   }
+
+  .big-head h2 {
+    max-width: 14ch;
+  }
+  .giant {
+    font-size: clamp(46px, 9.4vw, 136px);
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+    max-width: 10ch;
+  }
+  .offset {
+    margin-top: 48px;
+  }
+  @media (min-width: 900px) {
+    .offset {
+      margin-left: auto;
+      margin-top: 64px;
+    }
+  }
+
   .services {
-    margin-top: 64px;
+    margin-top: 80px;
   }
   .services li {
     display: grid;
-    gap: 4px;
+    gap: 6px;
+  }
+  .services li strong {
+    transition: color 160ms ease;
+  }
+  .services li:hover strong {
+    color: var(--orange);
   }
   @media (min-width: 900px) {
     .services li {
-      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
       gap: 24px;
       align-items: baseline;
     }
@@ -251,13 +314,29 @@ const hero = site.videos.heroLoop;
       margin-bottom: 0;
     }
   }
+
   .section-head {
-    margin-bottom: 56px;
+    margin-bottom: 64px;
   }
-  .final__body {
-    margin-top: 28px;
+  .section--tight {
+    padding-top: 0;
   }
-  .final__cta {
-    margin-top: 36px;
+
+  .final__row {
+    display: grid;
+    gap: 32px;
+    margin-top: 40px;
+  }
+  @media (min-width: 900px) {
+    .final__row {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: end;
+      gap: 48px;
+      margin-top: 56px;
+    }
+    .final__cta {
+      display: flex;
+      justify-content: flex-end;
+    }
   }
 </style>

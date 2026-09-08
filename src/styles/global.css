@@ -1,27 +1,65 @@
 /* One place for colours, type, and spacing. */
+/* One place for colours, type, and spacing.
+   The page ground is bright and warm. Sections can flip to dark or orange
+   with the .theme-dark and .theme-orange classes; every component reads
+   from the same tokens, so it adapts on its own. */
 :root {
-  --bg: #0b0b0b;
-  --text: #f2efea;
-  --muted: #8a8680;
-  --orange: #ff6a1a; /* [MY ORANGE HEX] not given. Placeholder. */
+  --bg: #f3efe8;
+  --text: #0b0b0b;
+  --muted: #6f6a62;
+  --orange: #ff6a1a;
   --orange-dark: #e65d14;
-  --rule: rgba(242, 239, 234, 0.12);
-  --surface: #141414;
+  --rule: rgba(11, 11, 11, 0.14);
+  --surface: #e8e2d8;
+  --ink: #0b0b0b;
+  --bone: #f3efe8;
+
+  --btn-bg: var(--orange);
+  --btn-text: #0b0b0b;
+  --btn-hover: var(--orange-dark);
+  --label: var(--orange);
 
   --font-display: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
   --font-body: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
 
   --max: 1280px;
   --gutter: clamp(20px, 4vw, 48px);
-  --section: 120px;
-  --measure: 62ch;
+  --section: 128px;
+  --measure: 60ch;
   --radius: 4px;
 }
 
 @media (max-width: 767px) {
   :root {
-    --section: 72px;
+    --section: 80px;
   }
+}
+
+.theme-dark {
+  --bg: #0b0b0b;
+  --text: #f3efe8;
+  --muted: #8a8680;
+  --rule: rgba(243, 239, 232, 0.14);
+  --surface: #161513;
+  --label: var(--orange);
+}
+
+.theme-orange {
+  --bg: #ff6a1a;
+  --text: #0b0b0b;
+  --muted: rgba(11, 11, 11, 0.62);
+  --rule: rgba(11, 11, 11, 0.22);
+  --surface: #f07a35;
+  --label: #0b0b0b;
+  --btn-bg: #0b0b0b;
+  --btn-text: #f3efe8;
+  --btn-hover: #1c1a17;
+}
+
+.theme-dark,
+.theme-orange {
+  background: var(--bg);
+  color: var(--text);
 }
 
 @font-face {
@@ -98,11 +136,20 @@ h3 {
 }
 
 h1 {
-  font-size: clamp(40px, 7vw, 96px);
+  font-size: clamp(46px, 9.4vw, 136px);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
 }
 
 h2 {
-  font-size: clamp(36px, 5.2vw, 72px);
+  font-size: clamp(38px, 6.4vw, 92px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+/* The claim in the hero, set in orange. */
+.accent {
+  color: var(--orange);
 }
 
 h3 {
@@ -125,7 +172,7 @@ h3 {
   padding-bottom: var(--section);
 }
 
-.section + .section {
+.section + .section:not(.theme-dark):not(.theme-orange) {
   border-top: 1px solid var(--rule);
 }
 
@@ -134,8 +181,14 @@ h3 {
 }
 
 .lead {
-  font-size: clamp(18px, 1.4vw, 21px);
-  line-height: 1.5;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.45;
+}
+
+.lead--big {
+  font-size: clamp(22px, 2.2vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
 }
 
 .muted {
@@ -149,7 +202,7 @@ h3 {
   font-weight: 400;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--label);
   margin-bottom: 28px;
 }
 
@@ -178,6 +231,8 @@ h3 {
 /* Buttons */
 .btn {
   display: inline-flex;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   align-items: center;
   justify-content: center;
   gap: 10px;
@@ -186,7 +241,6 @@ h3 {
   border-radius: var(--radius);
   font: inherit;
   font-size: 17px;
-  font-weight: 400;
   line-height: 1;
   cursor: pointer;
   border: 1px solid transparent;
@@ -195,20 +249,26 @@ h3 {
 }
 
 .btn--primary {
-  background: var(--orange);
-  color: #0b0b0b;
-  border-color: var(--orange);
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
 }
 
 .btn--primary:hover {
-  background: var(--orange-dark);
-  border-color: var(--orange-dark);
+  background: var(--btn-hover);
+  border-color: var(--btn-hover);
+}
+
+.btn--lg {
+  min-height: 64px;
+  padding: 0 34px;
+  font-size: 19px;
 }
 
 .btn--secondary {
   background: transparent;
   color: var(--text);
-  border-color: rgba(242, 239, 234, 0.35);
+  border-color: var(--rule);
 }
 
 .btn--secondary:hover {
@@ -233,7 +293,7 @@ h3 {
 }
 
 .plain-list li {
-  padding: 22px 0;
+  padding: 26px 0;
   border-top: 1px solid var(--rule);
 }
 
@@ -244,8 +304,10 @@ h3 {
 .plain-list li strong {
   display: block;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
+  font-size: clamp(22px, 2.2vw, 32px);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 6px;
 }
 
 /* Inputs */
@@ -267,7 +329,7 @@ h3 {
   padding: 0 14px;
   font: inherit;
   color: var(--text);
-  background: var(--surface);
+  background: transparent;
   border: 1px solid var(--rule);
   border-radius: var(--radius);
 }
@@ -304,3 +366,21 @@ html.motion [data-scale] {
   background: var(--orange);
   color: #0b0b0b;
 }
+
+/* Viewfinder corner marks on video boxes */
+.corners::before,
+.corners::after,
+.corners > .corner-b::before,
+.corners > .corner-b::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(243, 239, 232, 0.55);
+  pointer-events: none;
+  z-index: 3;
+}
+.corners::before { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+.corners::after { top: 10px; right: 10px; border-left: 0; border-bottom: 0; }
+.corners > .corner-b::before { bottom: 10px; left: 10px; border-right: 0; border-top: 0; }
+.corners > .corner-b::after { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }

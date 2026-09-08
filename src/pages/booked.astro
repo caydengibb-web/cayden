@@ -19,34 +19,35 @@ import { site } from '../data/site';
 
   <main class="booked">
     <div class="wrap">
+      <span class="label">Booked</span>
       <h1>You're booked.</h1>
-      <p class="lead measure booked__body">Check your email for the details. Cayden will see you then.</p>
+      <p class="lead lead--big measure booked__body">Check your email for the details. Cayden will see you then.</p>
     </div>
   </main>
 
   <Footer minimal />
 
+  <style>
+    .top {
+      padding-top: 22px;
+    }
+    .wordmark {
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      font-size: 17px;
+    }
+    .booked {
+      min-height: 72vh;
+      display: flex;
+      align-items: center;
+      padding: var(--section) 0;
+    }
+    .booked__body {
+      margin-top: 32px;
+    }
+  </style>
+
   <script>
     import '../scripts/booked';
   </script>
 </Base>
-
-<style>
-  .top {
-    padding-top: 22px;
-  }
-  .wordmark {
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    font-size: 17px;
-  }
-  .booked {
-    min-height: 70vh;
-    display: flex;
-    align-items: center;
-    padding: var(--section) 0;
-  }
-  .booked__body {
-    margin-top: 28px;
-  }
-</style>

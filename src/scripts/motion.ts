@@ -50,7 +50,16 @@ function splitLines(el: HTMLElement): HTMLElement[] {
  * in order: the label (if any), then each line of the heading.
  */
 function splitBlock(el: HTMLElement): HTMLElement[] {
-  if (el.matches('h1, h2, h3')) return splitLines(el);
+  if (el.matches('h1, h2, h3')) {
+    // A heading built from spans (for example an outlined second half)
+    // animates span by span so the markup survives.
+    const spans = Array.from(el.children).filter((c) => c.matches('span')) as HTMLElement[];
+    if (spans.length > 0) {
+      spans.forEach((sp) => (sp.style.display = 'inline-block'));
+      return spans;
+    }
+    return splitLines(el);
+  }
   const parts: HTMLElement[] = [];
   Array.from(el.children).forEach((child) => {
     const c = child as HTMLElement;

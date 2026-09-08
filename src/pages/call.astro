@@ -21,16 +21,20 @@ const intro = site.videos.callIntro;
   bodyClass="page-call"
 >
   <header class="top">
-    <div class="wrap">
+    <div class="wrap top__row">
       <span class="wordmark">{site.name}</span>
+      <span class="top__place">{site.city}</span>
     </div>
   </header>
 
   <main>
     <section class="hero-call">
       <div class="wrap" data-hero-text>
-        <h1 data-reveal-lines>Your company is bigger than it looks online.</h1>
-        <p class="lead measure hero-call__sub" data-reveal>
+        <h1 data-reveal-lines>
+          <span class="hl">Your company is</span>
+          <span class="hl accent">bigger than it looks online.</span>
+        </h1>
+        <p class="lead lead--big measure hero-call__sub" data-reveal>
           We make video for companies that never built a marketing team. Book a call and Cayden will
           show you what it would look like for yours.
         </p>
@@ -44,7 +48,7 @@ const intro = site.videos.callIntro;
           />
         </div>
         <div class="hero-call__cta" data-reveal>
-          <a href="#calendar" class="btn btn--primary" data-scroll-to>Pick a time</a>
+          <a href="#calendar" class="btn btn--primary btn--lg" data-scroll-to>Pick a time</a>
           <p class="muted hero-call__note">
             Cayden will call you within one business day if you leave your info instead.
           </p>
@@ -62,7 +66,7 @@ const intro = site.videos.callIntro;
       </div>
     </section>
 
-    <section class="section" id="results">
+    <section class="section theme-dark" id="results">
       <div class="wrap">
         <div data-reveal-lines class="section-head">
           <span class="label">Results</span>
@@ -74,12 +78,12 @@ const intro = site.videos.callIntro;
       </div>
     </section>
 
-    <section class="section" id="what-the-call-is">
+    <section class="section theme-orange" id="what-the-call-is">
       <div class="wrap split">
         <div data-reveal-lines>
           <h2>What the call is</h2>
         </div>
-        <p class="lead measure" data-reveal>
+        <p class="lead lead--big measure" data-reveal>
           Twenty minutes on the phone or video. Cayden looks at what you have now. He tells you what
           he'd film first and what it would cost. If it fits, you get a plan. If it doesn't, he'll say
           so.
@@ -94,12 +98,12 @@ const intro = site.videos.callIntro;
     </section>
 
     <section class="section final" id="pick">
-      <div class="wrap">
+      <div class="wrap final__row">
         <div data-reveal-lines>
-          <h2>Pick a time.</h2>
+          <h2 class="giant">Pick a time.</h2>
         </div>
         <div class="final__cta" data-reveal>
-          <a href="#calendar" class="btn btn--primary" data-scroll-to>Pick a time</a>
+          <a href="#calendar" class="btn btn--primary btn--lg" data-scroll-to>Pick a time</a>
         </div>
       </div>
     </section>
@@ -116,25 +120,40 @@ const intro = site.videos.callIntro;
   .top {
     padding-top: 22px;
   }
+  .top__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
   .wordmark {
     font-weight: 800;
     letter-spacing: -0.02em;
     font-size: 17px;
   }
+  .top__place {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
   .hero-call {
     padding: clamp(48px, 8vh, 96px) 0 var(--section);
   }
   .hero-call h1 {
-    max-width: 14ch;
+    max-width: 12ch;
+  }
+  .hl {
+    display: inline-block;
   }
   .hero-call__sub {
-    margin-top: 28px;
+    margin-top: 32px;
   }
   .hero-call__video {
-    margin-top: 40px;
+    margin-top: 48px;
   }
   .hero-call__cta {
-    margin-top: 32px;
+    margin-top: 36px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -145,24 +164,40 @@ const intro = site.videos.callIntro;
     max-width: 42ch;
   }
   .form-intro {
-    margin-top: 64px;
-    padding-top: 48px;
+    margin-top: 72px;
+    padding-top: 56px;
     border-top: 1px solid var(--rule);
   }
   .h3 {
-    font-size: clamp(24px, 2.6vw, 34px);
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    max-width: 30ch;
+    font-size: clamp(26px, 3vw, 40px);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    max-width: 28ch;
   }
   .section-head {
-    margin-bottom: 56px;
+    margin-bottom: 64px;
   }
   .clients-line {
     margin-top: 40px;
   }
-  .final__cta {
-    margin-top: 32px;
+  .giant {
+    font-size: clamp(46px, 9.4vw, 136px);
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+  }
+  .final__row {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 900px) {
+    .final__row {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: end;
+    }
+    .final__cta {
+      display: flex;
+      justify-content: flex-end;
+    }
   }
   @media (max-width: 767px) {
     .hero-call {

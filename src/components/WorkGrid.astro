@@ -17,8 +17,8 @@ const tall = items.filter((i) => i.video.ratio === '9x16');
 {
   wide.length > 0 && (
     <ul class="work-grid work-grid--wide plain">
-      {wide.map(({ client, video }) => (
-        <li class="work-item" data-scale>
+      {wide.map(({ client, video }, i) => (
+        <li class:list={['work-item', { 'work-item--featured': i === 0 }]} data-scale>
           <VimeoEmbed
             vimeoId={video.vimeoId}
             ratio="16x9"
@@ -64,7 +64,13 @@ const tall = items.filter((i) => i.video.ratio === '9x16');
   }
   .work-grid {
     display: grid;
-    gap: 40px 24px;
+    gap: 48px 28px;
+  }
+  .work-item--featured {
+    grid-column: 1 / -1;
+  }
+  .work-item--featured .work-item__meta {
+    font-size: 17px;
   }
   .work-grid + .work-grid {
     margin-top: 48px;
