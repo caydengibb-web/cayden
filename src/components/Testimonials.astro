@@ -3,7 +3,6 @@ import VimeoEmbed from './VimeoEmbed.astro';
 import { approvedTestimonials } from '../data/site';
 
 interface Props {
-  /** Cap the number shown. Home shows up to 3, /call shows 2. */
   max?: number;
 }
 const { max = 3 } = Astro.props;
@@ -36,19 +35,22 @@ const list = approvedTestimonials().slice(0, max);
   }
   .testimonials {
     display: grid;
-    gap: 40px 24px;
+    gap: 48px 28px;
   }
   @media (min-width: 720px) {
     .testimonials {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .testimonial:nth-child(2) {
+      margin-top: 96px;
     }
   }
   .testimonial__who {
     display: flex;
     flex-wrap: wrap;
     gap: 2px 12px;
-    margin-top: 14px;
-    font-size: 15px;
+    margin-top: 16px;
+    font-size: 16px;
     line-height: 1.4;
   }
   .testimonial__name {

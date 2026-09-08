@@ -5,8 +5,13 @@
  *  - Fires the Schedule event once when a call is booked.
  *  - Posts the lead form to the GoHighLevel webhook and fires Lead.
  */
-import { initMotion } from './motion';
+import { initSmooth, refreshSoon } from './smooth';
+import { initReveal, splitHeadline } from './reveal';
+import { initTimecode } from './hero';
 import { initVimeo } from './vimeo';
+import { initCursor } from './cursor';
+import { initMagnetic, initCount } from './extras';
+import { gsap, motionOn } from './gsap';
 import { track, trackScheduleOnce } from './track';
 
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'] as const;
@@ -66,19 +71,6 @@ function initCalendly(utm: Record<string, string>) {
         });
       }
     }
-  });
-}
-
-/* Smooth scroll to the calendar from any [data-scroll-to] link */
-function initScrollLinks() {
-  document.querySelectorAll<HTMLAnchorElement>('[data-scroll-to]').forEach((a) => {
-    a.addEventListener('click', (ev) => {
-      const target = document.querySelector(a.getAttribute('href') ?? '');
-      if (!target) return;
-      ev.preventDefault();
-      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-    });
   });
 }
 
@@ -152,9 +144,31 @@ function initForm(utm: Record<string, string>) {
   });
 }
 
+/* Hero on /call: headline lines rise on load, then the rest follows. */
+function initCallHero() {
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (!hero || !motionOn()) return;
+  const lines = hero.querySelectorAll<HTMLElement>('[data-lines]');
+  const blocks = hero.querySelectorAll<HTMLElement>('[data-reveal]');
+  const tl = gsap.timeline({ delay: 0.2, defaults: { ease: 'power3.out' } });
+  lines.forEach((el) => {
+    const split = splitHeadline(el);
+    tl.from(split.lines, { yPercent: 110, duration: 0.9, stagger: 0.09 }, 0);
+  });
+  tl.fromTo(blocks, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.1 }, 0.35);
+}
+
 const utm = readUtm();
-initVimeo();
-initCalendly(utm);
-initScrollLinks();
-initForm(utm);
-initMotion();
+document.fonts.ready.then(() => {
+  initSmooth();
+  initCallHero();
+  initTimecode();
+  initReveal();
+  initVimeo();
+  initCalendly(utm);
+  initForm(utm);
+  initCursor();
+  initMagnetic();
+  initCount();
+  refreshSoon();
+});

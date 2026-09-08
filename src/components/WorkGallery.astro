@@ -1,0 +1,162 @@
+---
+/**
+ * Work section. On desktop this pins and scrolls sideways.
+ * On phones it stacks. Reads approved clients only.
+ */
+import VimeoEmbed from './VimeoEmbed.astro';
+import { approvedClients } from '../data/site';
+
+const items = approvedClients().flatMap((client) =>
+  client.videos.map((video) => ({ client, video }))
+);
+---
+
+<section class="work theme-dark" id="work" data-work>
+  <div class="work__pin" data-work-pin>
+    <div class="work__track" data-work-track>
+      <div class="work__intro">
+        <span class="label">Work</span>
+        <h2 data-lines>Recent work.</h2>
+        <p class="mono muted work__hint" data-work-hint>Scroll</p>
+      </div>
+      {
+        items.map(({ client, video }) => (
+          <figure class:list={['work__item', `work__item--${video.ratio}`]} data-scale>
+            <VimeoEmbed vimeoId={video.vimeoId} ratio={video.ratio} poster={video.poster} title={`${client.name}: ${video.label}`} />
+            <figcaption class="work__meta">
+              <span class="work__name">{client.name}</span>
+              <span class="muted">{video.label}</span>
+            </figcaption>
+          </figure>
+        ))
+      }
+      <div class="work__end">
+        <a href="/call" class="btn btn--primary btn--lg" data-magnetic>Book a call</a>
+      </div>
+    </div>
+    <div class="work__progress" aria-hidden="true"><span data-work-progress></span></div>
+  </div>
+</section>
+
+<style>
+  .work {
+    position: relative;
+    overflow: hidden;
+  }
+  .work__pin {
+    position: relative;
+    padding: var(--section) 0;
+  }
+  .work__track {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding: 0 var(--gutter);
+  }
+  .work__intro {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .work__hint {
+    margin-top: 32px;
+    display: none;
+  }
+  .work__item {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .work__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .work__name {
+    font-weight: 800;
+  }
+  .work__end {
+    display: flex;
+    align-items: center;
+  }
+  .work__progress {
+    display: none;
+  }
+
+  /* No motion: a plain sideways scroller instead of the pinned track. */
+  @media (min-width: 900px) {
+    html:not(.motion) .work__pin {
+      height: auto;
+      padding: var(--section) 0;
+    }
+    html:not(.motion) .work__track {
+      width: auto;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      padding-bottom: 24px;
+    }
+    html:not(.motion) .work__item {
+      scroll-snap-align: start;
+    }
+    html:not(.motion) .work__progress {
+      display: none;
+    }
+  }
+  @media (min-width: 900px) {
+    .work__pin {
+      height: 100svh;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+    .work__track {
+      flex-direction: row;
+      align-items: flex-end;
+      gap: clamp(32px, 4vw, 64px);
+      padding: 0 var(--gutter);
+      width: max-content;
+      will-change: transform;
+    }
+    .work__intro {
+      width: 34vw;
+      height: 34vw;
+      max-height: 60svh;
+    }
+    .work__hint {
+      display: block;
+    }
+    .work__item--16x9 :global(.video) {
+      width: 60vw;
+      max-width: 1000px;
+    }
+    .work__item--9x16 :global(.video) {
+      width: 19vw;
+      max-width: 316px;
+    }
+    .work__end {
+      width: 30vw;
+      height: 34vw;
+      max-height: 60svh;
+      justify-content: center;
+    }
+    .work__progress {
+      display: block;
+      position: absolute;
+      left: var(--gutter);
+      right: var(--gutter);
+      bottom: 32px;
+      height: 1px;
+      background: var(--rule);
+    }
+    .work__progress span {
+      display: block;
+      height: 100%;
+      width: 100%;
+      background: var(--orange);
+      transform: scaleX(0);
+      transform-origin: left;
+    }
+  }
+</style>

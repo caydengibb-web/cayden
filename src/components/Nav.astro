@@ -2,42 +2,74 @@
 import { site } from '../data/site';
 ---
 
-<header class="nav">
-  <div class="wrap nav__row">
-    <a href="/" class="wordmark" aria-label={`${site.name} home`}>{site.name}</a>
-    <nav aria-label="Main">
-      <ul class="nav__links">
-        <li><a href="#what-we-do">What we do</a></li>
-        <li><a href="#work">Work</a></li>
-        <li><a href="#results">Results</a></li>
-      </ul>
-    </nav>
-    <a href="/call" class="btn btn--primary nav__cta">Book a call</a>
+<header class="nav" data-nav>
+  <div class="nav__blend">
+    <div class="wrap nav__row">
+      <a href="/" class="wordmark" aria-label={`${site.name} home`}>
+        <span class="wordmark__dot" aria-hidden="true"></span>
+        {site.name}
+      </a>
+      <nav aria-label="Main" class="nav__nav">
+        <ul class="nav__links">
+          <li><a href="#what-we-do" data-scroll-to>What we do</a></li>
+          <li><a href="#work" data-scroll-to>Work</a></li>
+          <li><a href="#results" data-scroll-to>Results</a></li>
+        </ul>
+      </nav>
+      <span class="nav__place mono">{site.city}</span>
+    </div>
+  </div>
+  <div class="wrap nav__cta-row">
+    <a href="/call" class="btn btn--primary nav__cta" data-magnetic>Book a call</a>
   </div>
 </header>
 
 <style>
   .nav {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 10;
-    padding-top: 22px;
-    color: #f3efe8;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .nav__blend {
+    color: var(--bone);
+    transition: color 260ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease;
+  }
+  .nav.is-tucked .nav__blend {
+    transform: translateY(-120%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .nav.is-light .nav__blend {
+    color: var(--ink);
   }
   .nav__row {
     display: flex;
     align-items: center;
     gap: 32px;
+    padding-top: 24px;
+    padding-right: 180px;
+  }
+  .nav__row > * {
+    pointer-events: auto;
   }
   .wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 800;
     letter-spacing: -0.02em;
     font-size: 17px;
     white-space: nowrap;
   }
-  nav {
+  .wordmark__dot {
+    width: 8px;
+    height: 8px;
+    background: currentColor;
+  }
+  .nav__nav {
     margin-left: auto;
   }
   .nav__links {
@@ -47,26 +79,42 @@ import { site } from '../data/site';
     padding: 0;
     gap: 28px;
     font-size: 15px;
-    color: rgba(243, 239, 232, 0.7);
+    opacity: 0.75;
   }
   .nav__links a:hover {
-    color: #f3efe8;
+    opacity: 1;
+  }
+  .nav__place {
+    display: none;
+    opacity: 0.6;
+  }
+  .nav__cta-row {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
   }
   .nav__cta {
-    min-height: 44px;
-    padding: 0 18px;
+    pointer-events: auto;
+    min-height: 46px;
+    padding: 0 20px;
     font-size: 15px;
     background: var(--orange);
     color: #0b0b0b;
     border-color: var(--orange);
   }
-  .nav__cta:hover {
+  .nav__cta::before {
     background: var(--orange-dark);
-    border-color: var(--orange-dark);
   }
   @media (min-width: 900px) {
     .nav__links {
       display: flex;
+    }
+    .nav__place {
+      display: inline;
     }
   }
 </style>

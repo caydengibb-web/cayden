@@ -1,6 +1,6 @@
 # Real Reach Content
 
-Two-page marketing site plus a thank-you page. Built with Astro, plain HTML and CSS, a little vanilla JavaScript, and GSAP for motion. Hosted on Netlify.
+Two-page marketing site plus a thank-you page. Built with Astro, plain HTML and CSS, a little vanilla JavaScript, and GSAP for motion (ScrollTrigger, ScrollSmoother, SplitText). Hosted on Netlify.
 
 - `/` is the general site.
 - `/call` is the ad landing page. One job: book a call.
@@ -132,4 +132,14 @@ netlify.toml       build settings and security headers
 
 Colours are CSS variables at the top of `src/styles/global.css`. Change them there and they change everywhere.
 
-Fonts are in `public/fonts`. The site uses Inter Tight, weight 400 for body and weight 800 for headlines. To swap fonts, drop the new `.woff2` files in that folder and update the `@font-face` blocks in `src/styles/global.css`.
+Fonts are in `public/fonts`. The site uses three faces:
+
+- Inter Tight 800 for headlines and 400 for body.
+- Instrument Serif italic for the orange claim lines.
+- JetBrains Mono for the small camera-style labels and timecode.
+
+To swap one, drop the new `.woff2` file in that folder and update the matching `@font-face` block in `src/styles/global.css`.
+
+## Motion
+
+All motion lives in `src/scripts`. The home hero (`hero.ts`) opens the viewfinder frame as you scroll. The work section (`work.ts`) pins and scrolls sideways on desktop. Reveals, the custom cursor, magnetic buttons, the marquee, and the hover previews are in `reveal.ts`, `cursor.ts`, and `extras.ts`. Everything turns off for visitors who ask for reduced motion, and the page shows its final state.

@@ -1,0 +1,118 @@
+---
+/**
+ * Camera viewfinder overlay: corner marks, REC, running timecode, clip name.
+ * Purely decorative. Hidden from screen readers.
+ */
+interface Props {
+  clip?: string;
+  place?: string;
+  class?: string;
+}
+const { clip = 'A001_C012', place = 'SARNIA, ON', class: className = '' } = Astro.props;
+---
+
+<div class:list={['vf', className]} data-viewfinder aria-hidden="true">
+  <span class="vf__c vf__c--tl"></span>
+  <span class="vf__c vf__c--tr"></span>
+  <span class="vf__c vf__c--bl"></span>
+  <span class="vf__c vf__c--br"></span>
+  <span class="vf__rec mono"><i></i>REC</span>
+  <span class="vf__tc mono" data-timecode>00:00:00:00</span>
+  <span class="vf__clip mono">{clip} · 24 FPS · 4K</span>
+  <span class="vf__place mono">{place}</span>
+  <span class="vf__cross"></span>
+</div>
+
+<style>
+  .vf {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: rgba(243, 239, 232, 0.85);
+  }
+  .vf__c {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid currentColor;
+  }
+  .vf__c--tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
+  .vf__c--tr { top: 14px; right: 14px; border-left: 0; border-bottom: 0; }
+  .vf__c--bl { bottom: 14px; left: 14px; border-right: 0; border-top: 0; }
+  .vf__c--br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; }
+  .vf__rec,
+  .vf__tc,
+  .vf__clip,
+  .vf__place {
+    position: absolute;
+    font-size: 11px;
+  }
+  .vf__rec {
+    top: 18px;
+    left: 48px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vf__rec i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+    animation: rec 1.2s steps(1) infinite;
+  }
+  .vf__tc {
+    top: 18px;
+    right: 48px;
+  }
+  .vf__clip {
+    bottom: 18px;
+    left: 48px;
+  }
+  .vf__place {
+    bottom: 18px;
+    right: 48px;
+  }
+  .vf__cross {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+  }
+  .vf__cross::before,
+  .vf__cross::after {
+    content: '';
+    position: absolute;
+    background: currentColor;
+  }
+  .vf__cross::before {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+  .vf__cross::after {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+  }
+  @keyframes rec {
+    0%, 60% { opacity: 1; }
+    61%, 100% { opacity: 0.15; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vf__rec i {
+      animation: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .vf__rec { left: 40px; }
+    .vf__tc { right: 40px; }
+    .vf__clip,
+    .vf__place { display: none; }
+  }
+</style>

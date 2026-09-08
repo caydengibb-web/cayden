@@ -8,8 +8,8 @@ const stats = approvedStats();
     <dl class="stats" data-reveal>
       {stats.map((s) => (
         <div class="stat">
-          <dd class="stat__value">{s.value}</dd>
-          <dt class="stat__label muted">{s.label}</dt>
+          <dd class="stat__value" data-count={s.value}>{s.value}</dd>
+          <dt class="stat__label">{s.label}</dt>
         </div>
       ))}
     </dl>
@@ -20,13 +20,13 @@ const stats = approvedStats();
   .stats {
     display: grid;
     gap: 40px;
-    margin: 96px 0 0;
+    margin: clamp(64px, 8vw, 120px) 0 0;
     padding-top: 48px;
     border-top: 1px solid var(--rule);
   }
   @media (min-width: 720px) {
     .stats {
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
   }
   .stat {
@@ -37,16 +37,17 @@ const stats = approvedStats();
     margin: 0;
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(72px, 10vw, 148px);
-    letter-spacing: -0.05em;
-    line-height: 0.9;
-    color: var(--orange);
+    font-size: clamp(80px, 12vw, 180px);
+    letter-spacing: -0.06em;
+    line-height: 0.86;
+    color: var(--accent);
     font-variant-numeric: tabular-nums;
     order: 1;
   }
   .stat__label {
-    margin-top: 14px;
+    margin-top: 16px;
     font-size: 17px;
+    color: var(--muted);
     order: 2;
     max-width: 22ch;
   }

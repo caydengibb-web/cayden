@@ -1,8 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
+import Cursor from '../components/Cursor.astro';
 import Footer from '../components/Footer.astro';
-import WorkGrid from '../components/WorkGrid.astro';
+import Viewfinder from '../components/Viewfinder.astro';
+import Marquee from '../components/Marquee.astro';
+import Services from '../components/Services.astro';
+import WorkGallery from '../components/WorkGallery.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Stats from '../components/Stats.astro';
 import WhoFor from '../components/WhoFor.astro';
@@ -18,55 +22,68 @@ const hero = site.videos.heroLoop;
   description="Real Reach Content makes video for established companies that never built a marketing team. We film it, write it, post it, and run the ads. Sarnia, Ontario."
   path="/"
 >
-  <Nav />
+  <Fragment slot="fixed">
+    <Nav />
+    <Cursor />
+  </Fragment>
 
-  <section class="hero theme-dark">
-    <video
-      class="hero__video"
-      data-hero-video
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="metadata"
-      poster={hero.poster}
-      aria-hidden="true"
-      tabindex="-1"
-    >
-      <source src={hero.webm} type="video/webm" />
-      <source src={hero.mp4} type="video/mp4" />
-    </video>
-    <div class="hero__shade" aria-hidden="true"></div>
-    <div class="hero__grain" aria-hidden="true"></div>
+  <section class="hero theme-dark" data-hero>
+    <div class="hero__frame" data-hero-frame>
+      <video
+        class="hero__video"
+        data-hero-video
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster={hero.poster}
+        aria-hidden="true"
+        tabindex="-1"
+      >
+        <source src={hero.webm} type="video/webm" />
+        <source src={hero.mp4} type="video/mp4" />
+      </video>
+      <div class="hero__shade" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+    </div>
 
-    <div class="wrap hero__content" data-hero-text>
-      <h1 data-reveal-lines>
-        <span class="hl">Your company is</span>
-        <span class="hl accent">bigger than it looks online.</span>
+    <div class="hero__vf" data-hero-vf>
+      <Viewfinder clip="A001_C001" />
+    </div>
+
+    <p class="hero__caption mono" data-hero-caption aria-hidden="true">Your company is</p>
+    <p class="hero__hint mono" data-hero-hint aria-hidden="true">
+      <span class="hero__hint-line"></span>Scroll
+    </p>
+
+    <div class="wrap hero__content">
+      <h1 class="hero__h1">
+        <span class="hero__title" data-hero-title>Your company is</span>
+        <span class="hero__claim serif accent" data-hero-claim>bigger than it looks online.</span>
       </h1>
       <div class="hero__row">
-        <p class="lead hero__sub" data-reveal>
+        <p class="lead hero__sub" data-hero-below>
           Real Reach Content makes video for established companies that never built a marketing
           team. We film it, write it, post it, and run the ads. You show up on camera a few hours a
           month.
         </p>
-        <div class="hero__cta" data-reveal>
-          <a href="/call" class="btn btn--primary btn--lg">Book a call</a>
+        <div class="hero__cta" data-hero-below>
+          <a href="/call" class="btn btn--primary btn--lg" data-magnetic data-cursor="Book">Book a call</a>
           {trusted && <p class="hero__trust">{trusted}</p>}
         </div>
       </div>
     </div>
-    <div class="hero__edge" aria-hidden="true"></div>
   </section>
 
+  <Marquee />
+
   <main>
-    <section class="section" id="problem">
+    <section class="section theme-bone" id="problem">
       <div class="wrap">
-        <div data-reveal-lines class="big-head">
-          <span class="label">The problem</span>
-          <h2>Your marketing is someone's side job.</h2>
-        </div>
-        <p class="lead lead--big measure offset" data-reveal>
+        <span class="label">The problem</span>
+        <h2 class="problem__h2" data-lines>Your marketing is someone's side job.</h2>
+        <p class="lead lead--big problem__body" data-words>
           Maybe it's an intern. Maybe it's the office manager between everything else. There is no
           plan. Posts go out when someone remembers. The last photo of your shop was taken on a phone
           in bad light. Meanwhile you have a hundred employees and clients across the country. Anyone
@@ -75,12 +92,12 @@ const hero = site.videos.heroLoop;
       </div>
     </section>
 
-    <section class="section" id="what-we-do">
+    <section class="section theme-bone what" id="what-we-do">
       <div class="wrap">
         <div class="split">
-          <div data-reveal-lines>
+          <div>
             <span class="label">What we do</span>
-            <h2>We take over your marketing and content.</h2>
+            <h2 data-lines>We take over your marketing and content.</h2>
           </div>
           <p class="lead measure" data-reveal>
             One team handles the whole thing. We come to you and film. We write what your leaders say
@@ -88,88 +105,58 @@ const hero = site.videos.heroLoop;
             the pieces that bring in clients.
           </p>
         </div>
-
-        <ul class="plain-list services" data-reveal>
-          <li>
-            <strong>Leadership videos.</strong>
-            <span class="muted">Your people talking to camera about what the company does and why.</span>
-          </li>
-          <li>
-            <strong>Company brand videos.</strong>
-            <span class="muted">Two to five minutes, made for your website and sales team.</span>
-          </li>
-          <li>
-            <strong>Client case studies.</strong>
-            <span class="muted">Your best client telling the story of working with you.</span>
-          </li>
-          <li>
-            <strong>Recruiting videos.</strong>
-            <span class="muted">Made for the roles you can't fill.</span>
-          </li>
-          <li>
-            <strong>Short clips for LinkedIn and Instagram.</strong>
-            <span class="muted">Cut from everything above, posted every week.</span>
-          </li>
-          <li>
-            <strong>Meta ads.</strong>
-            <span class="muted">Real video, real budget, aimed at the clients you want.</span>
-          </li>
-        </ul>
+        <Services />
       </div>
     </section>
 
-    <section class="section theme-dark" id="work">
-      <div class="wrap">
-        <div data-reveal-lines class="section-head">
-          <span class="label">Work</span>
-          <h2>Recent work.</h2>
-        </div>
-        <WorkGrid />
-      </div>
-    </section>
+    <WorkGallery />
 
-    <section class="section theme-dark section--tight" id="results">
+    <section class="section theme-dark results" id="results">
+      <div class="grain" aria-hidden="true"></div>
       <div class="wrap">
-        <div data-reveal-lines class="section-head">
+        <div class="section-head">
           <span class="label">Results</span>
-          <h2>What clients say.</h2>
+          <h2 data-lines>What clients say.</h2>
         </div>
         <Testimonials max={3} />
         <Stats />
       </div>
     </section>
 
-    <section class="section theme-orange" id="local">
+    <section class="section theme-orange local" id="local">
       <div class="wrap">
-        <div data-reveal-lines class="big-head">
+        <div class="local__top">
           <span class="label">Sarnia, Ontario</span>
-          <h2 class="giant">We're here.<br />We show up.</h2>
+          <span class="mono local__meta">
+            <span>42.97° N, 82.40° W</span>
+            <span>Now <span data-clock>0:00</span></span>
+          </span>
         </div>
-        <p class="lead lead--big measure offset" data-reveal>
+        <h2 class="giant" data-lines>We're here.<br />We show up.</h2>
+        <p class="lead lead--big measure local__body" data-reveal>
           We come to your shop, your yard, your office. We film your people where they work. Agencies
           you hire off the internet send a brief and hope for the best. We drive over.
         </p>
       </div>
     </section>
 
-    <section class="section" id="who">
+    <section class="section theme-bone" id="who">
       <div class="wrap">
         <WhoFor />
       </div>
     </section>
 
-    <section class="section final" id="book">
+    <section class="section theme-dark final" id="book">
+      <div class="grain" aria-hidden="true"></div>
       <div class="wrap">
-        <div data-reveal-lines>
-          <h2 class="giant">Book a call with Cayden.</h2>
-        </div>
+        <h2 class="giant" data-lines>Book a call with <span class="serif accent">Cayden.</span></h2>
         <div class="final__row">
           <p class="lead lead--big measure" data-reveal>
             Twenty minutes. We look at what you have now, tell you what we'd do, and if it fits you get
             a plan and a price. No slide deck.
           </p>
           <div data-reveal class="final__cta">
-            <a href="/call" class="btn btn--primary btn--lg">Book a call</a>
+            <a href="/call" class="btn btn--primary btn--lg" data-magnetic data-cursor="Book">Book a call</a>
           </div>
         </div>
       </div>
@@ -184,14 +171,19 @@ const hero = site.videos.heroLoop;
 </Base>
 
 <style>
+  /* Hero */
   .hero {
     position: relative;
-    min-height: 100svh;
-    display: flex;
-    align-items: flex-end;
-    padding: 140px 0 clamp(56px, 8vh, 96px);
+    height: 100svh;
+    min-height: 560px;
     overflow: hidden;
     isolation: isolate;
+  }
+  .hero__frame {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    clip-path: inset(0 0 0 0);
   }
   .hero__video {
     position: absolute;
@@ -199,61 +191,83 @@ const hero = site.videos.heroLoop;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: -3;
   }
   .hero__shade {
     position: absolute;
     inset: 0;
-    z-index: -2;
-    background: linear-gradient(
-      to bottom,
-      rgba(11, 11, 11, 0.3) 0%,
-      rgba(11, 11, 11, 0.5) 50%,
-      rgba(11, 11, 11, 0.9) 100%
-    );
+    background: linear-gradient(to bottom, rgba(11, 11, 11, 0.2) 0%, rgba(11, 11, 11, 0.35) 55%, rgba(11, 11, 11, 0.88) 100%);
   }
-  /* Faint film grain. One tiny SVG, no animation. */
-  .hero__grain {
+  .hero__vf {
     position: absolute;
     inset: 0;
-    z-index: -1;
-    opacity: 0.07;
+    z-index: 2;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 160px 160px;
   }
-  .hero__edge {
+  .hero__caption {
+    position: absolute;
+    top: 17%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--bone);
+    opacity: 0;
+    margin: 0;
+  }
+  .hero__hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    opacity: 0;
+    margin: 0;
+  }
+  .hero__hint-line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: currentColor;
+  }
+  .hero__content {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: 4px;
-    background: var(--orange);
+    bottom: clamp(40px, 7vh, 88px);
+    z-index: 3;
   }
-  .hero__content {
-    position: relative;
-  }
-  .hero h1 {
+  .hero__h1 {
+    display: flex;
+    flex-direction: column;
     max-width: 12ch;
   }
-  .hl {
-    display: inline-block;
+  .hero__title,
+  .hero__claim {
+    display: block;
+  }
+  .hero__claim {
+    font-size: 1.12em;
+    line-height: 0.92;
   }
   .hero__row {
     display: grid;
-    gap: 32px;
-    margin-top: 40px;
+    gap: 28px;
+    margin-top: clamp(28px, 4vh, 48px);
   }
   @media (min-width: 900px) {
     .hero__row {
       grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
       gap: 48px;
       align-items: end;
-      margin-top: 56px;
     }
   }
   .hero__sub {
-    max-width: var(--measure);
+    max-width: 52ch;
   }
   .hero__cta {
     display: flex;
@@ -271,72 +285,86 @@ const hero = site.videos.heroLoop;
     max-width: 34ch;
     color: rgba(243, 239, 232, 0.7);
   }
+  /* Without motion, show the hero fully open. */
+  html:not(.motion) .hero__vf,
+  html:not(.motion) .hero__caption,
+  html:not(.motion) .hero__hint {
+    display: none;
+  }
+  @media (max-width: 899px) {
+    .hero__h1 {
+      max-width: none;
+    }
+    .hero__caption {
+      top: 20%;
+    }
+  }
 
-  .big-head h2 {
-    max-width: 14ch;
+  /* Problem */
+  .problem__h2 {
+    max-width: 12ch;
   }
-  .giant {
-    font-size: clamp(46px, 9.4vw, 136px);
-    line-height: 0.94;
-    letter-spacing: -0.045em;
-    max-width: 10ch;
-  }
-  .offset {
-    margin-top: 48px;
+  .problem__body {
+    margin-top: clamp(40px, 6vw, 96px);
+    max-width: 30ch;
   }
   @media (min-width: 900px) {
-    .offset {
+    .problem__body {
       margin-left: auto;
-      margin-top: 64px;
-    }
-  }
-
-  .services {
-    margin-top: 80px;
-  }
-  .services li {
-    display: grid;
-    gap: 6px;
-  }
-  .services li strong {
-    transition: color 160ms ease;
-  }
-  .services li:hover strong {
-    color: var(--orange);
-  }
-  @media (min-width: 900px) {
-    .services li {
-      grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
-      gap: 24px;
-      align-items: baseline;
-    }
-    .services li strong {
-      margin-bottom: 0;
+      max-width: 34ch;
     }
   }
 
   .section-head {
-    margin-bottom: 64px;
+    margin-bottom: clamp(48px, 6vw, 88px);
   }
-  .section--tight {
-    padding-top: 0;
+  .giant {
+    font-size: clamp(48px, 10vw, 152px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
   }
 
+  /* Local */
+  .local__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px 32px;
+  }
+  .local__meta {
+    display: flex;
+    gap: 28px;
+    color: var(--muted);
+  }
+  .local__body {
+    margin-top: clamp(40px, 6vw, 80px);
+  }
+  @media (min-width: 900px) {
+    .local__body {
+      margin-left: auto;
+    }
+  }
+
+  /* Final */
   .final__row {
     display: grid;
     gap: 32px;
-    margin-top: 40px;
+    margin-top: clamp(40px, 6vw, 72px);
   }
   @media (min-width: 900px) {
     .final__row {
       grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
       align-items: end;
       gap: 48px;
-      margin-top: 56px;
     }
     .final__cta {
       display: flex;
       justify-content: flex-end;
     }
+  }
+  .results,
+  .final {
+    overflow: hidden;
   }
 </style>
