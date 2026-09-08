@@ -1,0 +1,51 @@
+---
+import { approvedStats } from '../data/site';
+const stats = approvedStats();
+---
+
+{
+  stats.length > 0 && (
+    <dl class="stats" data-reveal>
+      {stats.map((s) => (
+        <div class="stat">
+          <dd class="stat__value">{s.value}</dd>
+          <dt class="stat__label muted">{s.label}</dt>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+<style>
+  .stats {
+    display: grid;
+    gap: 32px;
+    margin: 64px 0 0;
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+  }
+  @media (min-width: 720px) {
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat__value {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(40px, 5vw, 64px);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    order: 1;
+  }
+  .stat__label {
+    margin-top: 10px;
+    font-size: 15px;
+    order: 2;
+    max-width: 24ch;
+  }
+</style>

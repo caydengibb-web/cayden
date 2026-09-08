@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /call
+Disallow: /booked
+
+Sitemap: https://realreachcontent.com/sitemap-index.xml

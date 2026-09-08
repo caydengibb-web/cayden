@@ -1,0 +1,263 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import WorkGrid from '../components/WorkGrid.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Stats from '../components/Stats.astro';
+import WhoFor from '../components/WhoFor.astro';
+import { site, clientNamesSentence } from '../data/site';
+
+const names = clientNamesSentence();
+const trusted = names ? `Trusted by ${names} and other companies across Ontario.` : '';
+const hero = site.videos.heroLoop;
+---
+
+<Base
+  title="Real Reach Content. Video marketing for established companies in Sarnia, Ontario."
+  description="Real Reach Content makes video for established companies that never built a marketing team. We film it, write it, post it, and run the ads. Sarnia, Ontario."
+  path="/"
+>
+  <Nav />
+
+  <section class="hero">
+    <video
+      class="hero__video"
+      data-hero-video
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster={hero.poster}
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <source src={hero.webm} type="video/webm" />
+      <source src={hero.mp4} type="video/mp4" />
+    </video>
+    <div class="hero__shade" aria-hidden="true"></div>
+    <div class="hero__grain" aria-hidden="true"></div>
+
+    <div class="wrap hero__content" data-hero-text>
+      <h1 data-reveal-lines>Your company is bigger than it looks online.</h1>
+      <p class="lead hero__sub" data-reveal>
+        Real Reach Content makes video for established companies that never built a marketing team.
+        We film it, write it, post it, and run the ads. You show up on camera a few hours a month.
+      </p>
+      <div class="hero__cta" data-reveal>
+        <a href="/call" class="btn btn--primary">Book a call</a>
+        {trusted && <p class="hero__trust muted">{trusted}</p>}
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="problem">
+      <div class="wrap split">
+        <div data-reveal-lines>
+          <span class="label">The problem</span>
+          <h2>Your marketing is someone's side job.</h2>
+        </div>
+        <p class="lead measure" data-reveal>
+          Maybe it's an intern. Maybe it's the office manager between everything else. There is no
+          plan. Posts go out when someone remembers. The last photo of your shop was taken on a phone
+          in bad light. Meanwhile you have a hundred employees and clients across the country. Anyone
+          who looks you up would never know.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="what-we-do">
+      <div class="wrap">
+        <div class="split">
+          <div data-reveal-lines>
+            <span class="label">What we do</span>
+            <h2>We take over your marketing and content.</h2>
+          </div>
+          <p class="lead measure" data-reveal>
+            One team handles the whole thing. We come to you and film. We write what your leaders say
+            on camera so it's true and sounds like them. We edit it, post it, and put money behind
+            the pieces that bring in clients.
+          </p>
+        </div>
+
+        <ul class="plain-list services" data-reveal>
+          <li>
+            <strong>Leadership videos.</strong>
+            <span class="muted">Your people talking to camera about what the company does and why.</span>
+          </li>
+          <li>
+            <strong>Company brand videos.</strong>
+            <span class="muted">Two to five minutes, made for your website and sales team.</span>
+          </li>
+          <li>
+            <strong>Client case studies.</strong>
+            <span class="muted">Your best client telling the story of working with you.</span>
+          </li>
+          <li>
+            <strong>Recruiting videos.</strong>
+            <span class="muted">Made for the roles you can't fill.</span>
+          </li>
+          <li>
+            <strong>Short clips for LinkedIn and Instagram.</strong>
+            <span class="muted">Cut from everything above, posted every week.</span>
+          </li>
+          <li>
+            <strong>Meta ads.</strong>
+            <span class="muted">Real video, real budget, aimed at the clients you want.</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" id="work">
+      <div class="wrap">
+        <div data-reveal-lines class="section-head">
+          <span class="label">Work</span>
+          <h2>Recent work.</h2>
+        </div>
+        <WorkGrid />
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="wrap">
+        <div data-reveal-lines class="section-head">
+          <span class="label">Results</span>
+          <h2>What clients say.</h2>
+        </div>
+        <Testimonials max={3} />
+        <Stats />
+      </div>
+    </section>
+
+    <section class="section" id="local">
+      <div class="wrap split">
+        <div data-reveal-lines>
+          <span class="label">Sarnia, Ontario</span>
+          <h2>We're here. We show up.</h2>
+        </div>
+        <p class="lead measure" data-reveal>
+          We come to your shop, your yard, your office. We film your people where they work. Agencies
+          you hire off the internet send a brief and hope for the best. We drive over.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="who">
+      <div class="wrap">
+        <WhoFor />
+      </div>
+    </section>
+
+    <section class="section final" id="book">
+      <div class="wrap">
+        <div data-reveal-lines>
+          <h2>Book a call with Cayden.</h2>
+        </div>
+        <p class="lead measure final__body" data-reveal>
+          Twenty minutes. We look at what you have now, tell you what we'd do, and if it fits you get
+          a plan and a price. No slide deck.
+        </p>
+        <div data-reveal class="final__cta">
+          <a href="/call" class="btn btn--primary">Book a call</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script>
+    import '../scripts/main';
+  </script>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding: 140px 0 clamp(56px, 8vh, 96px);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .hero__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -3;
+  }
+  .hero__shade {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(
+      to bottom,
+      rgba(11, 11, 11, 0.35) 0%,
+      rgba(11, 11, 11, 0.55) 55%,
+      rgba(11, 11, 11, 0.92) 100%
+    );
+  }
+  /* Faint film grain. One tiny SVG, no animation. */
+  .hero__grain {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.06;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+  .hero__content {
+    position: relative;
+  }
+  .hero h1 {
+    max-width: 14ch;
+  }
+  .hero__sub {
+    max-width: var(--measure);
+    margin-top: 32px;
+  }
+  .hero__cta {
+    margin-top: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 28px;
+  }
+  .hero__trust {
+    font-size: 15px;
+    max-width: 40ch;
+  }
+  .services {
+    margin-top: 64px;
+  }
+  .services li {
+    display: grid;
+    gap: 4px;
+  }
+  @media (min-width: 900px) {
+    .services li {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 24px;
+      align-items: baseline;
+    }
+    .services li strong {
+      margin-bottom: 0;
+    }
+  }
+  .section-head {
+    margin-bottom: 56px;
+  }
+  .final__body {
+    margin-top: 28px;
+  }
+  .final__cta {
+    margin-top: 36px;
+  }
+</style>

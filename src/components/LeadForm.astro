@@ -1,0 +1,92 @@
+---
+/**
+ * Short lead form. Posts JSON to PUBLIC_GHL_WEBHOOK_URL.
+ * The submit logic lives in src/scripts/call.ts. No form libraries.
+ */
+import { site } from '../data/site';
+const webhook = (import.meta.env.PUBLIC_GHL_WEBHOOK_URL ?? '').trim();
+---
+
+<form class="lead-form" data-lead-form data-webhook={webhook || undefined} novalidate>
+  <div class="lead-form__grid">
+    <div class="field">
+      <label for="lead-name">Name</label>
+      <input id="lead-name" name="name" type="text" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="lead-company">Company</label>
+      <input id="lead-company" name="company" type="text" autocomplete="organization" required />
+    </div>
+    <div class="field">
+      <label for="lead-phone">Phone</label>
+      <input id="lead-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+    </div>
+    <div class="field">
+      <label for="lead-email">Email</label>
+      <input id="lead-email" name="email" type="email" autocomplete="email" inputmode="email" required />
+    </div>
+  </div>
+
+  <!-- Spam trap. People never see this field. -->
+  <div class="lead-form__trap" aria-hidden="true">
+    <label for="lead-website">Website</label>
+    <input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="lead-form__actions">
+    <button type="submit" class="btn btn--primary">Send my info</button>
+    <p class="lead-form__msg" data-form-msg role="status" aria-live="polite"></p>
+  </div>
+
+  <p class="lead-form__done lead" data-form-done hidden>Got it. Cayden will call you within one business day.</p>
+  <p class="lead-form__error" data-form-error hidden>
+    That didn't go through. Email <a href={`mailto:${site.links.email}`}>{site.links.email}</a> and Cayden will call you.
+  </p>
+</form>
+
+<style>
+  .lead-form {
+    margin-top: 32px;
+  }
+  .lead-form__grid {
+    display: grid;
+    gap: 20px;
+  }
+  @media (min-width: 720px) {
+    .lead-form__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .lead-form__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .lead-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 24px;
+    margin-top: 28px;
+  }
+  .lead-form__msg {
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .lead-form__msg:empty {
+    display: none;
+  }
+  .lead-form__done,
+  .lead-form__error {
+    margin-top: 24px;
+  }
+  .lead-form__error a {
+    color: var(--orange);
+  }
+  .lead-form.is-done .lead-form__grid,
+  .lead-form.is-done .lead-form__actions {
+    display: none;
+  }
+</style>

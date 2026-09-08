@@ -1,0 +1,61 @@
+---
+/**
+ * Calendly inline embed, built as a plain iframe so no third-party
+ * script runs on the page. The script in call.ts adds UTM params and
+ * listens for the booking event.
+ */
+import { site } from '../data/site';
+
+const calendly = (import.meta.env.PUBLIC_CALENDLY_URL ?? site.links.calendly ?? '').trim();
+---
+
+<div class="calendly" id="calendar" data-calendly data-calendly-url={calendly || undefined}>
+  {
+    calendly ? (
+      <div class="calendly__frame" data-calendly-frame />
+    ) : (
+      <div class="calendly__empty">
+        <p class="muted">Calendar coming soon.</p>
+      </div>
+    )
+  }
+  <div class="calendly__done" data-calendly-done hidden>
+    <h2>You're booked.</h2>
+    <p class="lead">Check your email for the details. Cayden will see you then.</p>
+  </div>
+</div>
+
+<style>
+  .calendly {
+    scroll-margin-top: 24px;
+  }
+  .calendly__frame {
+    width: 100%;
+    min-height: 700px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .calendly__frame :global(iframe) {
+    width: 100%;
+    height: 100%;
+    min-height: 700px;
+    border: 0;
+    display: block;
+  }
+  .calendly__empty {
+    display: grid;
+    place-items: center;
+    min-height: 420px;
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+  }
+  .calendly__done {
+    padding: 64px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .calendly__done .lead {
+    margin-top: 20px;
+  }
+</style>

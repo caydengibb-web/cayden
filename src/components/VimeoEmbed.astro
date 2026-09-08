@@ -1,0 +1,169 @@
+---
+/**
+ * Lazy Vimeo player.
+ * Renders a dark box with a still and a play mark. The iframe is only
+ * added when someone clicks, or right away for `load="now"`.
+ * With no vimeoId it stays a placeholder.
+ */
+import type { Ratio } from '../data/site';
+
+interface Props {
+  vimeoId: string;
+  ratio?: Ratio;
+  poster?: string;
+  /** Read by screen readers and used as the iframe title. */
+  title: string;
+  /** "click" waits for a tap. "now" loads when the box is near the screen. */
+  load?: 'click' | 'now';
+  /** Start muted with captions on and show an unmute button. For /call. */
+  autoplayMuted?: boolean;
+  class?: string;
+}
+
+const {
+  vimeoId,
+  ratio = '16x9',
+  poster,
+  title,
+  load = 'click',
+  autoplayMuted = false,
+  class: className = '',
+} = Astro.props;
+
+const still = poster ?? (ratio === '9x16' ? '/img/still-9x16.jpg' : '/img/still-16x9.jpg');
+const hasVideo = vimeoId.trim().length > 0;
+---
+
+<div
+  class:list={['video', `video--${ratio}`, className, { 'video--empty': !hasVideo }]}
+  data-video
+  data-vimeo-id={hasVideo ? vimeoId : undefined}
+  data-load={load}
+  data-autoplay-muted={autoplayMuted ? '1' : undefined}
+  data-title={title}
+>
+  <img class="video__poster" src={still} alt="" width={ratio === '9x16' ? 720 : 1280} height={ratio === '9x16' ? 1280 : 720} loading="lazy" decoding="async" />
+  {
+    hasVideo ? (
+      <button type="button" class="video__play" aria-label={`Play ${title}`}>
+        <span class="video__mark" aria-hidden="true" />
+      </button>
+    ) : (
+      <span class="video__play video__play--static" aria-hidden="true">
+        <span class="video__mark" />
+      </span>
+    )
+  }
+  {
+    autoplayMuted && hasVideo && (
+      <button type="button" class="video__unmute" hidden>
+        Tap for sound
+      </button>
+    )
+  }
+</div>
+
+<style>
+  .video {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--surface);
+    overflow: hidden;
+    border-radius: var(--radius);
+    transition: transform 220ms ease;
+  }
+  .video--9x16 {
+    aspect-ratio: 9 / 16;
+  }
+  .video__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .video__play {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: rgba(11, 11, 11, 0.18);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text);
+  }
+  .video__play--static {
+    cursor: default;
+  }
+  .video__mark {
+    width: 64px;
+    height: 64px;
+    border: 1px solid rgba(242, 239, 234, 0.55);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(11, 11, 11, 0.4);
+    transition: border-color 200ms ease, background-color 200ms ease;
+  }
+  .video__mark::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-style: solid;
+    border-width: 10px 0 10px 17px;
+    border-color: transparent transparent transparent var(--text);
+  }
+  .video:hover .video__mark,
+  .video__play:focus-visible .video__mark {
+    border-color: var(--text);
+    background: rgba(11, 11, 11, 0.7);
+  }
+  .video:not(.video--empty):hover {
+    transform: translateY(-3px);
+  }
+  .video__play:focus-visible {
+    outline-offset: -3px;
+  }
+  .video__unmute {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 2;
+    min-height: 40px;
+    padding: 0 16px;
+    font: inherit;
+    font-size: 14px;
+    color: #0b0b0b;
+    background: var(--orange);
+    border: 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .video--playing .video__poster,
+  .video--playing .video__play {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .video,
+    .video__mark {
+      transition: none;
+    }
+    .video:not(.video--empty):hover {
+      transform: none;
+    }
+  }
+</style>

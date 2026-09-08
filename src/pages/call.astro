@@ -1,0 +1,172 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import VimeoEmbed from '../components/VimeoEmbed.astro';
+import Calendly from '../components/Calendly.astro';
+import LeadForm from '../components/LeadForm.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Stats from '../components/Stats.astro';
+import WhoFor from '../components/WhoFor.astro';
+import { site, clientNamesSentence } from '../data/site';
+
+const names = clientNamesSentence();
+const intro = site.videos.callIntro;
+---
+
+<Base
+  title="Book a call with Cayden. Real Reach Content."
+  description="Twenty minutes with Cayden from Real Reach Content. See what video would look like for your company. Sarnia, Ontario."
+  path="/call"
+  noindex
+  bodyClass="page-call"
+>
+  <header class="top">
+    <div class="wrap">
+      <span class="wordmark">{site.name}</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-call">
+      <div class="wrap" data-hero-text>
+        <h1 data-reveal-lines>Your company is bigger than it looks online.</h1>
+        <p class="lead measure hero-call__sub" data-reveal>
+          We make video for companies that never built a marketing team. Book a call and Cayden will
+          show you what it would look like for yours.
+        </p>
+        <div class="hero-call__video" data-reveal>
+          <VimeoEmbed
+            vimeoId={intro.vimeoId}
+            poster={intro.poster}
+            title="Cayden from Real Reach Content"
+            load="now"
+            autoplayMuted
+          />
+        </div>
+        <div class="hero-call__cta" data-reveal>
+          <a href="#calendar" class="btn btn--primary" data-scroll-to>Pick a time</a>
+          <p class="muted hero-call__note">
+            Cayden will call you within one business day if you leave your info instead.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="book">
+      <div class="wrap">
+        <Calendly />
+        <div class="form-intro" data-reveal>
+          <h2 class="h3">Not ready to pick a time? Leave your info and Cayden will call you.</h2>
+          <LeadForm />
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="results">
+      <div class="wrap">
+        <div data-reveal-lines class="section-head">
+          <span class="label">Results</span>
+          <h2>What clients say.</h2>
+        </div>
+        <Testimonials max={2} />
+        {names && <p class="lead muted clients-line" data-reveal>Clients include {names}.</p>}
+        <Stats />
+      </div>
+    </section>
+
+    <section class="section" id="what-the-call-is">
+      <div class="wrap split">
+        <div data-reveal-lines>
+          <h2>What the call is</h2>
+        </div>
+        <p class="lead measure" data-reveal>
+          Twenty minutes on the phone or video. Cayden looks at what you have now. He tells you what
+          he'd film first and what it would cost. If it fits, you get a plan. If it doesn't, he'll say
+          so.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="who">
+      <div class="wrap">
+        <WhoFor />
+      </div>
+    </section>
+
+    <section class="section final" id="pick">
+      <div class="wrap">
+        <div data-reveal-lines>
+          <h2>Pick a time.</h2>
+        </div>
+        <div class="final__cta" data-reveal>
+          <a href="#calendar" class="btn btn--primary" data-scroll-to>Pick a time</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer minimal />
+
+  <script>
+    import '../scripts/call';
+  </script>
+</Base>
+
+<style>
+  .top {
+    padding-top: 22px;
+  }
+  .wordmark {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 17px;
+  }
+  .hero-call {
+    padding: clamp(48px, 8vh, 96px) 0 var(--section);
+  }
+  .hero-call h1 {
+    max-width: 14ch;
+  }
+  .hero-call__sub {
+    margin-top: 28px;
+  }
+  .hero-call__video {
+    margin-top: 40px;
+  }
+  .hero-call__cta {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 28px;
+  }
+  .hero-call__note {
+    font-size: 15px;
+    max-width: 42ch;
+  }
+  .form-intro {
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--rule);
+  }
+  .h3 {
+    font-size: clamp(24px, 2.6vw, 34px);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    max-width: 30ch;
+  }
+  .section-head {
+    margin-bottom: 56px;
+  }
+  .clients-line {
+    margin-top: 40px;
+  }
+  .final__cta {
+    margin-top: 32px;
+  }
+  @media (max-width: 767px) {
+    .hero-call {
+      padding-top: 40px;
+    }
+  }
+</style>

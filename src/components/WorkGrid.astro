@@ -1,0 +1,94 @@
+---
+/**
+ * Work section. Reads approved clients and lays out their videos.
+ * Wide (16:9) videos go in a two-column grid. Tall (9:16) clips go in
+ * their own row under it so nothing fights the grid.
+ */
+import VimeoEmbed from './VimeoEmbed.astro';
+import { approvedClients } from '../data/site';
+
+const items = approvedClients().flatMap((client) =>
+  client.videos.map((video) => ({ client, video }))
+);
+const wide = items.filter((i) => i.video.ratio === '16x9');
+const tall = items.filter((i) => i.video.ratio === '9x16');
+---
+
+{
+  wide.length > 0 && (
+    <ul class="work-grid work-grid--wide plain">
+      {wide.map(({ client, video }) => (
+        <li class="work-item" data-scale>
+          <VimeoEmbed
+            vimeoId={video.vimeoId}
+            ratio="16x9"
+            poster={video.poster}
+            title={`${client.name}: ${video.label}`}
+          />
+          <div class="work-item__meta">
+            <span class="work-item__name">{client.name}</span>
+            <span class="muted">{video.label}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+{
+  tall.length > 0 && (
+    <ul class="work-grid work-grid--tall plain">
+      {tall.map(({ client, video }) => (
+        <li class="work-item" data-scale>
+          <VimeoEmbed
+            vimeoId={video.vimeoId}
+            ratio="9x16"
+            poster={video.poster}
+            title={`${client.name}: ${video.label}`}
+          />
+          <div class="work-item__meta">
+            <span class="work-item__name">{client.name}</span>
+            <span class="muted">{video.label}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .plain {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .work-grid {
+    display: grid;
+    gap: 40px 24px;
+  }
+  .work-grid + .work-grid {
+    margin-top: 48px;
+  }
+  .work-grid--tall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 720px) {
+    .work-grid--wide {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .work-grid--tall {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .work-item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .work-item__name {
+    font-weight: 800;
+  }
+</style>

@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+---
+
+<Base
+  title="You're booked. Real Reach Content."
+  description="Your call with Cayden is booked. Check your email for the details."
+  path="/booked"
+  noindex
+  bodyClass="page-booked"
+>
+  <header class="top">
+    <div class="wrap">
+      <span class="wordmark">{site.name}</span>
+    </div>
+  </header>
+
+  <main class="booked">
+    <div class="wrap">
+      <h1>You're booked.</h1>
+      <p class="lead measure booked__body">Check your email for the details. Cayden will see you then.</p>
+    </div>
+  </main>
+
+  <Footer minimal />
+
+  <script>
+    import '../scripts/booked';
+  </script>
+</Base>
+
+<style>
+  .top {
+    padding-top: 22px;
+  }
+  .wordmark {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 17px;
+  }
+  .booked {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    padding: var(--section) 0;
+  }
+  .booked__body {
+    margin-top: 28px;
+  }
+</style>

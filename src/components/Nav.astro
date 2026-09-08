@@ -1,0 +1,64 @@
+---
+import { site } from '../data/site';
+---
+
+<header class="nav">
+  <div class="wrap nav__row">
+    <a href="/" class="wordmark" aria-label={`${site.name} home`}>{site.name}</a>
+    <nav aria-label="Main">
+      <ul class="nav__links">
+        <li><a href="#what-we-do">What we do</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#results">Results</a></li>
+      </ul>
+    </nav>
+    <a href="/call" class="btn btn--primary nav__cta">Book a call</a>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding-top: 22px;
+  }
+  .nav__row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .wordmark {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 17px;
+    white-space: nowrap;
+  }
+  nav {
+    margin-left: auto;
+  }
+  .nav__links {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 28px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .nav__links a:hover {
+    color: var(--text);
+  }
+  .nav__cta {
+    min-height: 44px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+  @media (min-width: 900px) {
+    .nav__links {
+      display: flex;
+    }
+  }
+</style>

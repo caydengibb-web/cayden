@@ -1,0 +1,84 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  /** Only a copyright line. Used on /call and /booked. */
+  minimal?: boolean;
+}
+const { minimal = false } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="wrap">
+    {
+      minimal ? (
+        <p class="footer__copy muted">
+          &copy; {year} {site.name}. {site.city}.
+        </p>
+      ) : (
+        <div class="footer__row">
+          <div>
+            <a href="/" class="wordmark">
+              {site.name}
+            </a>
+            <p class="muted footer__line">
+              {site.name}. {site.city}.
+            </p>
+          </div>
+          <ul class="footer__links">
+            <li>
+              <a href={`mailto:${site.links.email}`}>Email</a>
+            </li>
+            <li>
+              <a href={site.links.linkedin} rel="noopener" target="_blank">
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href={site.links.instagram} rel="noopener" target="_blank">
+                Instagram
+              </a>
+            </li>
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--rule);
+    padding: 40px 0 48px;
+    font-size: 15px;
+  }
+  .footer__row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 24px 40px;
+    align-items: flex-end;
+  }
+  .wordmark {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 17px;
+  }
+  .footer__line {
+    margin-top: 6px;
+  }
+  .footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 24px;
+  }
+  .footer__links a:hover {
+    color: var(--orange);
+  }
+  .footer__copy {
+    font-size: 14px;
+  }
+</style>
