@@ -6,7 +6,7 @@
   --ink: #111110;
   --bone: #f4f2ed;
   --stone: #e9e6df;
-  --grey: #8c877f;
+  --grey: #6f6b64;
   --orange: #ff6a1a;
   --orange-dark: #e65d14;
 
@@ -170,7 +170,7 @@ h3 {
   line-height: 1.5;
 }
 .lead--big {
-  font-size: clamp(22px, 2.4vw, 36px);
+  font-size: clamp(24px, 2.4vw, 36px);
   line-height: 1.25;
   letter-spacing: -0.025em;
   font-weight: 500;
@@ -307,7 +307,7 @@ html.motion [data-lines].is-split {
   z-index: 2;
 }
 [data-words] {
-  --word-from: #b8b3aa;
+  --word-from: #8c877f;
 }
 
 .sr-only {
