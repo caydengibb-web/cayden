@@ -67,7 +67,7 @@ export function initReveal(root: ParentNode = document) {
   root.querySelectorAll<HTMLElement>('[data-words]').forEach((el) => {
     const split = SplitText.create(el, { type: 'words', wordsClass: 'word', aria: 'none' });
     gsap.set(el, { opacity: 1 });
-    const from = getComputedStyle(el).getPropertyValue('--word-from').trim() || '#8b857c';
+    const from = getComputedStyle(el).getPropertyValue('--word-from').trim() || '#b8b3aa';
     const to = getComputedStyle(el).color;
     gsap.fromTo(
       split.words,

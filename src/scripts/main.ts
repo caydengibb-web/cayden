@@ -5,7 +5,7 @@ import { initReveal } from './reveal';
 import { initWork } from './work';
 import { initVimeo } from './vimeo';
 import { initCursor } from './cursor';
-import { initMagnetic, initPreview, initMarquee, initCount, initClock, initNavTheme } from './extras';
+import { initMagnetic, initPreview, initCount, initClock, initNavTheme } from './extras';
 
 document.fonts.ready.then(() => {
   initSmooth();
@@ -17,7 +17,6 @@ document.fonts.ready.then(() => {
   initCursor();
   initMagnetic();
   initPreview();
-  initMarquee();
   initCount();
   initClock();
   initNavTheme();

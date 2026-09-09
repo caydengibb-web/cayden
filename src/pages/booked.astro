@@ -12,17 +12,14 @@ import { site } from '../data/site';
   bodyClass="page-booked"
 >
   <header class="top">
-    <div class="wrap">
-      <span class="wordmark"><span class="wordmark__dot" aria-hidden="true"></span>{site.name}</span>
-    </div>
+    <div class="wrap mono">{site.name}</div>
   </header>
 
-  <main class="booked theme-dark">
-    <div class="grain" aria-hidden="true"></div>
+  <main class="booked center">
     <div class="wrap">
       <span class="label">Booked</span>
-      <h1>You're <span class="serif accent">booked.</span></h1>
-      <p class="lead lead--big measure booked__body">Check your email for the details. Cayden will see you then.</p>
+      <h1>You're booked.</h1>
+      <p class="lead narrow booked__body">Check your email for the details. Cayden will see you then.</p>
     </div>
   </main>
 
@@ -30,36 +27,16 @@ import { site } from '../data/site';
 
   <style>
     .top {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding-top: 24px;
-      color: var(--bone);
-    }
-    .wordmark {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      font-size: 17px;
-    }
-    .wordmark__dot {
-      width: 8px;
-      height: 8px;
-      background: var(--orange);
+      padding-top: 20px;
     }
     .booked {
-      position: relative;
-      min-height: 80svh;
+      min-height: 78svh;
       display: flex;
       align-items: center;
       padding: var(--section) 0;
-      overflow: hidden;
     }
     .booked__body {
-      margin-top: 32px;
+      margin-top: 28px;
     }
   </style>
 

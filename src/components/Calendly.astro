@@ -33,8 +33,6 @@ const calendly = (import.meta.env.PUBLIC_CALENDLY_URL ?? site.links.calendly ?? 
     width: 100%;
     min-height: 700px;
     background: var(--bg);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
     overflow: hidden;
   }
   .calendly__frame :global(iframe) {
@@ -48,8 +46,7 @@ const calendly = (import.meta.env.PUBLIC_CALENDLY_URL ?? site.links.calendly ?? 
     display: grid;
     place-items: center;
     min-height: 420px;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius);
+    background: var(--stone);
   }
   .calendly__done {
     padding: 64px 0;

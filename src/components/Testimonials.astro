@@ -11,12 +11,12 @@ const list = approvedTestimonials().slice(0, max);
 
 {
   list.length > 0 && (
-    <ul class="testimonials plain">
+    <ul class="testimonials plain-list">
       {list.map((t) => (
         <li class="testimonial" data-scale>
           <VimeoEmbed vimeoId={t.vimeoId} poster={t.poster} title={`${t.name}, ${t.company}`} />
-          <p class="testimonial__who">
-            <span class="testimonial__name">{t.name}</span>
+          <p class="testimonial__who mono">
+            <span>{t.name}</span>
             <span class="muted">
               {t.title}, {t.company}
             </span>
@@ -28,32 +28,22 @@ const list = approvedTestimonials().slice(0, max);
 }
 
 <style>
-  .plain {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
   .testimonials {
     display: grid;
-    gap: 48px 28px;
+    gap: 56px 32px;
   }
   @media (min-width: 720px) {
     .testimonials {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
     .testimonial:nth-child(2) {
-      margin-top: 96px;
+      margin-top: 120px;
     }
   }
   .testimonial__who {
     display: flex;
     flex-wrap: wrap;
-    gap: 2px 12px;
-    margin-top: 16px;
-    font-size: 16px;
-    line-height: 1.4;
-  }
-  .testimonial__name {
-    font-weight: 800;
+    gap: 4px 16px;
+    margin-top: 14px;
   }
 </style>

@@ -8,16 +8,16 @@ const { minimal = false } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
-<footer class="footer theme-dark">
+<footer class="footer">
   <div class="wrap">
     {
       minimal ? (
-        <p class="footer__copy mono muted">
+        <p class="footer__copy mono muted center">
           &copy; {year} {site.name}. {site.city}.
         </p>
       ) : (
-        <div class="footer__row">
-          <p class="footer__line">
+        <div class="footer__row mono">
+          <p>
             {site.name}. {site.city}.
           </p>
           <ul class="footer__links">
@@ -51,20 +51,17 @@ const year = new Date().getFullYear();
 <style>
   .footer {
     position: relative;
-    padding: 64px 0 0;
+    padding: 48px 0 0;
     overflow: hidden;
   }
   .footer__row {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 24px 40px;
+    gap: 16px 40px;
     align-items: baseline;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--rule);
-  }
-  .footer__line {
-    font-size: 16px;
+    padding-bottom: 24px;
+    color: var(--muted);
   }
   .footer__links {
     list-style: none;
@@ -72,40 +69,24 @@ const year = new Date().getFullYear();
     padding: 0;
     display: flex;
     gap: 28px;
-    font-size: 16px;
   }
-  .footer__links a {
-    position: relative;
-  }
-  .footer__links a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -4px;
-    height: 1px;
-    background: var(--orange);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .footer__links a:hover::after {
-    transform: scaleX(1);
+  .footer__links a:hover {
+    color: var(--ink);
   }
   .footer__copy {
-    padding-bottom: 48px;
+    padding-bottom: 40px;
   }
   .footer__mark {
     display: flex;
     justify-content: center;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: 15.2vw;
-    letter-spacing: -0.05em;
+    font-weight: 500;
+    font-size: 15.4vw;
+    letter-spacing: -0.06em;
     line-height: 0.78;
     white-space: nowrap;
-    color: var(--bone);
-    margin-top: 40px;
-    transform: translateY(0.14em);
+    color: var(--ink);
+    margin-top: 16px;
+    transform: translateY(0.16em);
   }
 </style>

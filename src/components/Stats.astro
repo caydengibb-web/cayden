@@ -9,7 +9,7 @@ const stats = approvedStats();
       {stats.map((s) => (
         <div class="stat">
           <dd class="stat__value" data-count={s.value}>{s.value}</dd>
-          <dt class="stat__label">{s.label}</dt>
+          <dt class="stat__label mono muted">{s.label}</dt>
         </div>
       ))}
     </dl>
@@ -19,10 +19,9 @@ const stats = approvedStats();
 <style>
   .stats {
     display: grid;
-    gap: 40px;
-    margin: clamp(64px, 8vw, 120px) 0 0;
-    padding-top: 48px;
-    border-top: 1px solid var(--rule);
+    gap: 48px;
+    margin: clamp(80px, 12vw, 160px) 0 0;
+    text-align: center;
   }
   @media (min-width: 720px) {
     .stats {
@@ -32,23 +31,22 @@ const stats = approvedStats();
   .stat {
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
   .stat__value {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 800;
-    font-size: clamp(80px, 12vw, 180px);
-    letter-spacing: -0.06em;
-    line-height: 0.86;
-    color: var(--accent);
+    font-weight: 500;
+    font-size: clamp(88px, 14vw, 220px);
+    letter-spacing: -0.07em;
+    line-height: 0.84;
+    color: var(--ink);
     font-variant-numeric: tabular-nums;
     order: 1;
   }
   .stat__label {
-    margin-top: 16px;
-    font-size: 17px;
-    color: var(--muted);
+    margin-top: 20px;
     order: 2;
-    max-width: 22ch;
+    max-width: 24ch;
   }
 </style>

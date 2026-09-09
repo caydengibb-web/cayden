@@ -1,21 +1,25 @@
 ---
-/** "This works best when" list. Same on home and /call. */
+/** "This works best when" list. Same on home and /call. Quiet, centred. */
 ---
 
-<div class="split">
-  <div>
-    <h2 data-lines>This works best when</h2>
-  </div>
-  <ul class="plain-list lead lead--big who-list">
-    <li data-reveal>You have real clients and a real team, and nobody whose full job is marketing.</li>
-    <li data-reveal>You're at the point of thinking about hiring a marketing person.</li>
-    <li data-reveal>You'll give us a few hours a month on camera.</li>
-    <li data-reveal>You want the company to look like what it is.</li>
+<div class="who center">
+  <h2 data-lines>This works best when</h2>
+  <ul class="plain-list who__list narrow">
+    <li class="lead--big" data-reveal>You have real clients and a real team, and nobody whose full job is marketing.</li>
+    <li class="lead--big" data-reveal>You're at the point of thinking about hiring a marketing person.</li>
+    <li class="lead--big" data-reveal>You'll give us a few hours a month on camera.</li>
+    <li class="lead--big" data-reveal>You want the company to look like what it is.</li>
   </ul>
 </div>
 
 <style>
-  .who-list li {
-    padding: 30px 0;
+  .who__list {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 5vw, 64px);
+    margin-top: clamp(56px, 8vw, 104px);
+  }
+  .who__list li {
+    text-wrap: balance;
   }
 </style>

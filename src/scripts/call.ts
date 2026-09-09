@@ -41,8 +41,8 @@ function initCalendly(utm: Record<string, string>) {
     url.searchParams.set('embed_domain', window.location.hostname);
     url.searchParams.set('embed_type', 'Inline');
     url.searchParams.set('hide_gdpr_banner', '1');
-    url.searchParams.set('background_color', 'f3efe8');
-    url.searchParams.set('text_color', '0b0b0b');
+    url.searchParams.set('background_color', 'f4f2ed');
+    url.searchParams.set('text_color', '111110');
     url.searchParams.set('primary_color', 'ff6a1a');
     for (const [k, v] of Object.entries(utm)) url.searchParams.set(k, v);
 

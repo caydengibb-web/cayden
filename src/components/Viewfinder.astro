@@ -1,8 +1,5 @@
 ---
-/**
- * Camera viewfinder overlay: corner marks, REC, running timecode, clip name.
- * Purely decorative. Hidden from screen readers.
- */
+/** Camera viewfinder overlay: corners, REC, timecode, clip name. Decorative. */
 interface Props {
   clip?: string;
   place?: string;
@@ -28,12 +25,12 @@ const { clip = 'A001_C012', place = 'SARNIA, ON', class: className = '' } = Astr
     position: absolute;
     inset: 0;
     pointer-events: none;
-    color: rgba(243, 239, 232, 0.85);
+    color: rgba(244, 242, 237, 0.9);
   }
   .vf__c {
     position: absolute;
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border: 1.5px solid currentColor;
   }
   .vf__c--tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; }
@@ -45,42 +42,32 @@ const { clip = 'A001_C012', place = 'SARNIA, ON', class: className = '' } = Astr
   .vf__clip,
   .vf__place {
     position: absolute;
-    font-size: 11px;
   }
   .vf__rec {
     top: 18px;
-    left: 48px;
+    left: 46px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
   }
   .vf__rec i {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--orange);
     animation: rec 1.2s steps(1) infinite;
   }
-  .vf__tc {
-    top: 18px;
-    right: 48px;
-  }
-  .vf__clip {
-    bottom: 18px;
-    left: 48px;
-  }
-  .vf__place {
-    bottom: 18px;
-    right: 48px;
-  }
+  .vf__tc { top: 18px; right: 46px; }
+  .vf__clip { bottom: 18px; left: 46px; }
+  .vf__place { bottom: 18px; right: 46px; }
   .vf__cross {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     transform: translate(-50%, -50%);
-    opacity: 0.5;
+    opacity: 0.6;
   }
   .vf__cross::before,
   .vf__cross::after {
@@ -88,26 +75,14 @@ const { clip = 'A001_C012', place = 'SARNIA, ON', class: className = '' } = Astr
     position: absolute;
     background: currentColor;
   }
-  .vf__cross::before {
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-  }
-  .vf__cross::after {
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-  }
+  .vf__cross::before { left: 50%; top: 0; bottom: 0; width: 1px; }
+  .vf__cross::after { top: 50%; left: 0; right: 0; height: 1px; }
   @keyframes rec {
     0%, 60% { opacity: 1; }
     61%, 100% { opacity: 0.15; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .vf__rec i {
-      animation: none;
-    }
+    .vf__rec i { animation: none; }
   }
   @media (max-width: 767px) {
     .vf__rec { left: 40px; }

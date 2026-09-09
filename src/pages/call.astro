@@ -27,21 +27,20 @@ const intro = site.videos.callIntro;
   </Fragment>
 
   <header class="top">
-    <div class="wrap top__row">
-      <span class="wordmark"><span class="wordmark__dot" aria-hidden="true"></span>{site.name}</span>
-      <span class="mono muted">{site.city}</span>
+    <div class="wrap top__row mono">
+      <span>{site.name}</span>
+      <span class="muted">{site.city}</span>
     </div>
   </header>
 
   <main>
-    <section class="hero-call theme-dark" data-hero>
-      <div class="grain" aria-hidden="true"></div>
+    <section class="hero-call" data-hero>
       <div class="wrap">
         <h1 class="hero-call__h1">
-          <span class="hero-call__title" data-lines>Your company is</span>
-          <span class="hero-call__claim serif accent" data-lines>bigger than it looks online.</span>
+          <span class="hero-call__title mono" data-reveal>Your company is</span>
+          <span class="hero-call__claim" data-lines>bigger than it looks online.</span>
         </h1>
-        <p class="lead lead--big measure hero-call__sub" data-reveal>
+        <p class="lead narrow hero-call__sub" data-reveal>
           We make video for companies that never built a marketing team. Book a call and Cayden will
           show you what it would look like for yours.
         </p>
@@ -51,40 +50,39 @@ const intro = site.videos.callIntro;
         </div>
         <div class="hero-call__cta" data-reveal>
           <a href="#calendar" class="btn btn--primary btn--lg" data-scroll-to data-magnetic data-cursor="Pick">Pick a time</a>
-          <p class="hero-call__note">Cayden will call you within one business day if you leave your info instead.</p>
+          <p class="hero-call__note mono muted">Cayden will call you within one business day if you leave your info instead.</p>
         </div>
       </div>
     </section>
 
-    <section class="section theme-bone" id="book">
+    <section class="section" id="book">
       <div class="wrap">
         <Calendly />
-        <div class="form-intro" data-reveal>
+        <div class="form-intro narrow" data-reveal>
           <h2 class="h3">Not ready to pick a time? Leave your info and Cayden will call you.</h2>
           <LeadForm />
         </div>
       </div>
     </section>
 
-    <section class="section theme-dark results" id="results">
-      <div class="grain" aria-hidden="true"></div>
+    <section class="section results" id="results">
       <div class="wrap">
-        <div class="section-head">
+        <div class="center">
           <span class="label">Results</span>
           <h2 data-lines>What clients say.</h2>
         </div>
-        <Testimonials max={2} />
-        {names && <p class="lead muted clients-line" data-reveal>Clients include {names}.</p>}
+        <div class="results__grid">
+          <Testimonials max={2} />
+        </div>
+        {names && <p class="mono muted center clients-line" data-reveal>Clients include {names}.</p>}
         <Stats />
       </div>
     </section>
 
-    <section class="section theme-orange" id="what-the-call-is">
-      <div class="wrap split">
-        <div>
-          <h2 data-lines>What the call is</h2>
-        </div>
-        <p class="lead lead--big measure" data-reveal>
+    <section class="section center" id="what-the-call-is">
+      <div class="wrap">
+        <h2 data-lines>What the call is</h2>
+        <p class="lead--big narrow call-body" data-reveal>
           Twenty minutes on the phone or video. Cayden looks at what you have now. He tells you what
           he'd film first and what it would cost. If it fits, you get a plan. If it doesn't, he'll say
           so.
@@ -92,16 +90,15 @@ const intro = site.videos.callIntro;
       </div>
     </section>
 
-    <section class="section theme-bone" id="who">
+    <section class="section" id="who">
       <div class="wrap">
         <WhoFor />
       </div>
     </section>
 
-    <section class="section theme-dark final" id="pick">
-      <div class="grain" aria-hidden="true"></div>
-      <div class="wrap final__row">
-        <h2 class="giant" data-lines>Pick a <span class="serif accent">time.</span></h2>
+    <section class="section final center" id="pick">
+      <div class="wrap">
+        <h2 class="final__h2" data-lines>Pick a time.</h2>
         <div class="final__cta" data-reveal>
           <a href="#calendar" class="btn btn--primary btn--lg" data-scroll-to data-magnetic data-cursor="Pick">Pick a time</a>
         </div>
@@ -118,13 +115,7 @@ const intro = site.videos.callIntro;
 
 <style>
   .top {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 5;
-    padding-top: 24px;
-    color: var(--bone);
+    padding-top: 20px;
   }
   .top__row {
     display: flex;
@@ -132,43 +123,36 @@ const intro = site.videos.callIntro;
     align-items: center;
     gap: 16px;
   }
-  .wordmark {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    font-size: 17px;
-  }
-  .wordmark__dot {
-    width: 8px;
-    height: 8px;
-    background: var(--orange);
-  }
   .hero-call {
-    position: relative;
-    padding: clamp(96px, 14vh, 160px) 0 var(--section);
-    overflow: hidden;
+    padding: clamp(64px, 12vh, 140px) 0 var(--section);
+    text-align: center;
   }
   .hero-call__h1 {
     display: flex;
     flex-direction: column;
-    max-width: 12ch;
+    align-items: center;
+    gap: 28px;
   }
-  .hero-call__title,
+  .hero-call__title {
+    letter-spacing: 0.22em;
+    font-size: 12px;
+  }
   .hero-call__claim {
     display: block;
-  }
-  .hero-call__claim {
-    font-size: 1.12em;
-    line-height: 0.92;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(40px, 7.4vw, 108px);
+    letter-spacing: -0.05em;
+    line-height: 0.94;
+    max-width: 12ch;
   }
   .hero-call__sub {
-    margin-top: clamp(28px, 4vw, 48px);
+    margin-top: clamp(28px, 4vw, 40px);
   }
   .hero-call__video {
     position: relative;
-    margin-top: clamp(40px, 6vw, 72px);
+    margin: clamp(48px, 7vw, 88px) auto 0;
+    max-width: 1100px;
   }
   .hero-call__vf {
     z-index: 4;
@@ -176,53 +160,39 @@ const intro = site.videos.callIntro;
   .hero-call__cta {
     margin-top: 40px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    gap: 16px 28px;
+    gap: 18px;
   }
   .hero-call__note {
-    font-size: 15px;
-    max-width: 40ch;
-    color: rgba(243, 239, 232, 0.7);
+    max-width: 44ch;
+    text-align: center;
   }
   .form-intro {
-    margin-top: clamp(64px, 8vw, 96px);
-    padding-top: 56px;
-    border-top: 1px solid var(--rule);
+    margin-top: clamp(72px, 10vw, 120px);
   }
   .h3 {
-    font-size: clamp(28px, 3.4vw, 48px);
-    letter-spacing: -0.03em;
+    font-size: clamp(26px, 3vw, 40px);
+    letter-spacing: -0.035em;
     line-height: 1.05;
-    max-width: 24ch;
   }
-  .section-head {
-    margin-bottom: clamp(48px, 6vw, 88px);
+  .results__grid {
+    margin-top: clamp(56px, 8vw, 104px);
+    max-width: 1040px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .clients-line {
-    margin-top: 40px;
+    margin-top: 48px;
   }
-  .giant {
-    font-size: clamp(48px, 10vw, 152px);
-    line-height: 0.92;
-    letter-spacing: -0.045em;
+  .call-body {
+    margin-top: clamp(36px, 5vw, 56px);
   }
-  .final__row {
-    display: grid;
-    gap: 32px;
+  .final__h2 {
+    font-size: clamp(56px, 12vw, 180px);
+    letter-spacing: -0.06em;
   }
-  @media (min-width: 900px) {
-    .final__row {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      align-items: end;
-    }
-    .final__cta {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
-  .results,
-  .final {
-    overflow: hidden;
+  .final__cta {
+    margin-top: clamp(36px, 5vw, 56px);
   }
 </style>

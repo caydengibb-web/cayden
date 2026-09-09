@@ -1,81 +1,30 @@
 /* ------------------------------------------------------------------
    Real Reach Content
-   Tokens live here. Sections switch palette with .theme-dark,
-   .theme-bone and .theme-orange. Every component reads the tokens.
+   One bright ground. Ink type. Orange only on the button and small marks.
    ------------------------------------------------------------------ */
 :root {
-  --ink: #0b0b0b;
-  --bone: #f3efe8;
+  --ink: #111110;
+  --bone: #f4f2ed;
+  --stone: #e9e6df;
+  --grey: #8c877f;
   --orange: #ff6a1a;
   --orange-dark: #e65d14;
-  --orange-deep: #d9530b;
-  --rust: #b9430a;
 
-  /* default palette: dark */
-  --bg: var(--ink);
-  --text: var(--bone);
-  --muted: #8a8680;
-  --rule: rgba(243, 239, 232, 0.14);
-  --surface: #151412;
-  --label: var(--orange);
-  --accent: var(--orange);
-  --btn-bg: var(--orange);
-  --btn-text: #0b0b0b;
-  --btn-hover: var(--orange-dark);
-
-  --font-display: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
-  --font-body: 'Inter Tight', 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  --max: 1320px;
-  --gutter: clamp(20px, 4vw, 56px);
-  --section: clamp(96px, 12vw, 160px);
-  --measure: 58ch;
-  --radius: 4px;
-}
-
-.theme-bone {
   --bg: var(--bone);
   --text: var(--ink);
-  --muted: #6f6a62;
-  --rule: rgba(11, 11, 11, 0.14);
-  --surface: #e8e2d8;
-  --label: var(--rust);
-  --accent: var(--orange-deep);
-}
+  --muted: var(--grey);
+  --rule: rgba(17, 17, 16, 0.12);
+  --surface: var(--stone);
 
-.theme-dark {
-  --bg: var(--ink);
-  --text: var(--bone);
-  --muted: #8a8680;
-  --rule: rgba(243, 239, 232, 0.14);
-  --surface: #151412;
-  --label: var(--orange);
-  --accent: var(--orange);
-  --btn-bg: var(--orange);
-  --btn-text: #0b0b0b;
-  --btn-hover: var(--orange-dark);
-}
+  --font-display: 'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-.theme-orange {
-  --bg: var(--orange);
-  --text: var(--ink);
-  --muted: rgba(11, 11, 11, 0.76);
-  --rule: rgba(11, 11, 11, 0.22);
-  --surface: #f07a35;
-  --label: var(--ink);
-  --accent: var(--ink);
-  --btn-bg: var(--ink);
-  --btn-text: var(--bone);
-  --btn-hover: #1c1a17;
-}
-
-.theme-bone,
-.theme-dark,
-.theme-orange {
-  background: var(--bg);
-  color: var(--text);
+  --max: 1360px;
+  --narrow: 640px;
+  --gutter: clamp(20px, 4vw, 64px);
+  --section: clamp(120px, 20vh, 240px);
+  --radius: 0px;
 }
 
 /* Fonts, self-hosted */
@@ -89,16 +38,16 @@
 @font-face {
   font-family: 'Inter Tight';
   font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-tight-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
   font-weight: 800;
   font-display: swap;
   src: url('/fonts/inter-tight-latin-800-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
 }
 @font-face {
   font-family: 'JetBrains Mono';
@@ -115,25 +64,22 @@
 }
 
 html {
-  background: var(--ink);
-  color: var(--bone);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-body);
-  font-size: 18px;
+  font-size: 17px;
   line-height: 1.5;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
 }
 @media (min-width: 768px) {
   html {
-    font-size: 19px;
+    font-size: 18px;
   }
 }
-html.motion.fine {
-  cursor: none;
-}
+html.motion.fine,
 html.motion.fine a,
-html.motion.fine button,
-html.motion.fine [role='button'] {
+html.motion.fine button {
   cursor: none;
 }
 html.motion.fine input,
@@ -145,8 +91,8 @@ html.motion.fine iframe {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--ink);
-  color: var(--bone);
+  background: var(--bg);
+  color: var(--text);
   overflow-x: hidden;
 }
 
@@ -169,37 +115,30 @@ h2,
 h3 {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.98;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
   text-wrap: balance;
 }
 h1 {
-  font-size: clamp(48px, 10vw, 152px);
+  font-size: clamp(40px, 6.6vw, 96px);
 }
 h2 {
-  font-size: clamp(40px, 7vw, 104px);
+  font-size: clamp(38px, 6.4vw, 92px);
 }
 h3 {
   font-size: clamp(22px, 2.2vw, 30px);
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
+.heavy {
+  font-weight: 800;
+}
 
-/* The claim, set in serif italic. */
-.serif {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
-}
-.accent {
-  color: var(--accent);
-}
 .mono {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
 }
@@ -212,59 +151,42 @@ h3 {
   padding-left: var(--gutter);
   padding-right: var(--gutter);
 }
+.narrow {
+  width: 100%;
+  max-width: var(--narrow);
+  margin-left: auto;
+  margin-right: auto;
+}
 .section {
   position: relative;
   padding-top: var(--section);
   padding-bottom: var(--section);
 }
-.measure {
-  max-width: var(--measure);
+.center {
+  text-align: center;
 }
 .lead {
-  font-size: clamp(18px, 1.5vw, 22px);
-  line-height: 1.45;
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.5;
 }
 .lead--big {
-  font-size: clamp(24px, 2.6vw, 40px);
-  line-height: 1.22;
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.25;
   letter-spacing: -0.025em;
+  font-weight: 500;
 }
 .muted {
   color: var(--muted);
 }
 
 .label {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
+  display: block;
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--label);
-  margin-bottom: 32px;
-}
-.label::before {
-  content: '';
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-}
-
-/* Two columns, heading left, copy right and lower */
-.split {
-  display: grid;
-  gap: 40px;
-}
-@media (min-width: 900px) {
-  .split {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    gap: 64px;
-    align-items: start;
-  }
-  .split > :last-child {
-    padding-top: clamp(24px, 6vw, 96px);
-  }
+  color: var(--muted);
+  margin-bottom: 28px;
 }
 
 /* Buttons */
@@ -273,13 +195,12 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: 56px;
+  min-height: 54px;
   padding: 0 28px;
   border-radius: var(--radius);
   font: inherit;
-  font-weight: 800;
-  font-size: 17px;
+  font-weight: 500;
+  font-size: 16px;
   letter-spacing: -0.01em;
   line-height: 1;
   cursor: pointer;
@@ -290,35 +211,36 @@ h3 {
   transition: color 200ms ease, border-color 200ms ease;
 }
 .btn--primary {
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  border-color: var(--btn-bg);
+  background: var(--orange);
+  color: var(--ink);
+  border-color: var(--orange);
 }
 .btn--primary::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: var(--btn-hover);
+  background: var(--ink);
   transform: translateY(101%);
-  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  color: var(--bone);
 }
 .btn--primary:hover::before,
 .btn--primary:focus-visible::before {
   transform: translateY(0);
 }
 .btn--lg {
-  min-height: 72px;
+  min-height: 68px;
   padding: 0 40px;
-  font-size: 20px;
+  font-size: 18px;
 }
 .btn--secondary {
   background: transparent;
   color: var(--text);
-  border-color: var(--rule);
-}
-.btn--secondary:hover {
-  border-color: var(--text);
+  border-color: var(--ink);
 }
 
 :focus-visible {
@@ -326,26 +248,11 @@ h3 {
   outline-offset: 3px;
 }
 
-/* Ruled lists */
+/* Lists */
 .plain-list {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-.plain-list li {
-  padding: 28px 0;
-  border-top: 1px solid var(--rule);
-}
-.plain-list li:last-child {
-  border-bottom: 1px solid var(--rule);
-}
-.plain-list li strong {
-  display: block;
-  font-weight: 800;
-  font-size: clamp(24px, 2.6vw, 40px);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  margin-bottom: 8px;
 }
 
 /* Inputs */
@@ -355,30 +262,29 @@ h3 {
 }
 .field label {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: 11px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
 .field input {
   width: 100%;
-  min-height: 56px;
-  padding: 0 0;
+  min-height: 52px;
+  padding: 0;
   font: inherit;
   font-size: 20px;
   color: var(--text);
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--ink);
   border-radius: 0;
 }
 .field input:focus {
   outline: none;
-  border-bottom-color: var(--accent);
+  border-bottom-color: var(--orange);
 }
 
-/* Motion resting states.
-   Only when the motion class is on do we hide things before they reveal. */
+/* Motion resting states, only when motion is on */
 html.motion [data-reveal],
 html.motion [data-lines],
 html.motion [data-scale] {
@@ -387,69 +293,21 @@ html.motion [data-scale] {
 html.motion [data-lines].is-split {
   opacity: 1;
 }
-/* Words in a scroll-fill paragraph start at this colour and end at the text colour. */
-[data-words] {
-  --word-from: #8b857c;
-}
-.theme-dark [data-words] {
-  --word-from: #5e5a54;
+/* SplitText wraps each line in a .line-mask that clips. Give descenders room. */
+.line-mask {
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
 }
 [data-lines] .line {
   display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em;
-  margin-bottom: -0.06em;
 }
-[data-lines] .line > * {
-  display: block;
+/* The hover preview sits behind the page content, the page above it. */
+#smooth-wrapper {
+  position: relative;
+  z-index: 2;
 }
-
-/* Film grain, static. */
-.grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-/* Viewfinder corner marks */
-.corners::before,
-.corners::after,
-.corners > .corner-b::before,
-.corners > .corner-b::after {
-  content: '';
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: 1px solid rgba(243, 239, 232, 0.6);
-  pointer-events: none;
-  z-index: 3;
-}
-.corners::before {
-  top: 12px;
-  left: 12px;
-  border-right: 0;
-  border-bottom: 0;
-}
-.corners::after {
-  top: 12px;
-  right: 12px;
-  border-left: 0;
-  border-bottom: 0;
-}
-.corners > .corner-b::before {
-  bottom: 12px;
-  left: 12px;
-  border-right: 0;
-  border-top: 0;
-}
-.corners > .corner-b::after {
-  bottom: 12px;
-  right: 12px;
-  border-left: 0;
-  border-top: 0;
+[data-words] {
+  --word-from: #b8b3aa;
 }
 
 .sr-only {
@@ -466,5 +324,5 @@ html.motion [data-lines].is-split {
 
 ::selection {
   background: var(--orange);
-  color: #0b0b0b;
+  color: var(--ink);
 }

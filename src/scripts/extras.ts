@@ -25,7 +25,7 @@ export function initPreview() {
   const float = document.querySelector<HTMLElement>('[data-preview-float]');
   const img = float?.querySelector<HTMLImageElement>('[data-preview-img]');
   if (!float || !img || !motionOn() || !finePointer() || !isDesktop()) return;
-  gsap.set(float, { xPercent: 0, yPercent: -50, scale: 0.9 });
+  gsap.set(float, { xPercent: -50, yPercent: -50, scale: 0.94 });
   const x = gsap.quickTo(float, 'x', { duration: 0.5, ease: 'power3' });
   const y = gsap.quickTo(float, 'y', { duration: 0.5, ease: 'power3' });
   const rows = document.querySelectorAll<HTMLElement>('[data-preview]');
@@ -39,26 +39,10 @@ export function initPreview() {
       gsap.to(float, { opacity: 0, scale: 0.9, duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
     });
     row.addEventListener('mousemove', (e) => {
-      x(e.clientX + 48);
+      x(e.clientX);
       y(e.clientY);
     });
   });
-}
-
-export function initMarquee() {
-  const track = document.querySelector<HTMLElement>('[data-marquee]');
-  if (!track || !motionOn()) return;
-  const group = track.firstElementChild as HTMLElement | null;
-  if (!group) return;
-  const tween = gsap.to(track, {
-    x: () => -group.offsetWidth,
-    ease: 'none',
-    duration: () => group.offsetWidth / 60,
-    repeat: -1,
-    modifiers: { x: (v) => `${parseFloat(v) % group.offsetWidth}px` },
-  });
-  track.addEventListener('mouseenter', () => gsap.to(tween, { timeScale: 0.25, duration: 0.6 }));
-  track.addEventListener('mouseleave', () => gsap.to(tween, { timeScale: 1, duration: 0.6 }));
 }
 
 export function initCount() {
@@ -90,30 +74,16 @@ export function initClock() {
   setInterval(tick, 15000);
 }
 
-/**
- * Nav: text flips to ink over bright sections, and the wordmark and links
- * slide away while scrolling down so they never sit on top of headlines.
- * The Book a call button stays.
- */
+/** Wordmark and links tuck away while scrolling down. The button stays. */
 export function initNavTheme() {
   const nav = document.querySelector<HTMLElement>('[data-nav]');
-  if (!nav) return;
+  if (!nav || !motionOn()) return;
   import('./gsap').then(({ ScrollTrigger }) => {
-    if (motionOn()) {
-      ScrollTrigger.create({
-        start: 120,
-        end: 'max',
-        onUpdate: (self) => nav.classList.toggle('is-tucked', self.direction === 1),
-        onLeaveBack: () => nav.classList.remove('is-tucked'),
-      });
-    }
-    document.querySelectorAll<HTMLElement>('.theme-bone, .theme-orange').forEach((sec) => {
-      ScrollTrigger.create({
-        trigger: sec,
-        start: 'top 40px',
-        end: 'bottom 40px',
-        onToggle: (self) => nav.classList.toggle('is-light', self.isActive),
-      });
+    ScrollTrigger.create({
+      start: 120,
+      end: 'max',
+      onUpdate: (self) => nav.classList.toggle('is-tucked', self.direction === 1),
+      onLeaveBack: () => nav.classList.remove('is-tucked'),
     });
   });
 }

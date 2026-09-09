@@ -1,5 +1,5 @@
 ---
-/** Custom cursor. Only shown for mouse and trackpad users with motion on. */
+/** Custom cursor and the floating hover preview. Mouse and trackpad only. */
 ---
 
 <div class="preview" data-preview-float aria-hidden="true">
@@ -8,7 +8,7 @@
 <div class="cursor" data-cursor aria-hidden="true">
   <div class="cursor__dot" data-cursor-dot></div>
   <div class="cursor__ring" data-cursor-ring>
-    <span class="cursor__label" data-cursor-label></span>
+    <span class="cursor__label mono" data-cursor-label></span>
   </div>
 </div>
 
@@ -22,10 +22,9 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: 40;
-      width: 320px;
+      z-index: 1;
+      width: 440px;
       aspect-ratio: 16 / 9;
-      border-radius: 4px;
       overflow: hidden;
       pointer-events: none;
       opacity: 0;
@@ -35,7 +34,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: sepia(0.4) saturate(1.4) hue-rotate(var(--hue, 0deg));
+    filter: sepia(0.4) saturate(1.3) hue-rotate(var(--hue, 0deg));
   }
   .cursor {
     display: none;
@@ -52,29 +51,29 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 8px;
-    height: 8px;
-    margin: -4px 0 0 -4px;
-    background: var(--orange);
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    background: var(--ink);
     border-radius: 50%;
   }
   .cursor__ring {
     position: absolute;
     top: 0;
     left: 0;
-    width: 40px;
-    height: 40px;
-    margin: -20px 0 0 -20px;
-    border: 1px solid rgba(255, 106, 26, 0.8);
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border: 1px solid rgba(17, 17, 16, 0.5);
     border-radius: 50%;
     display: grid;
     place-items: center;
-    transition: width 220ms ease, height 220ms ease, margin 220ms ease, background-color 220ms ease;
+    transition: width 220ms ease, height 220ms ease, margin 220ms ease, background-color 220ms ease, border-color 220ms ease;
   }
   .cursor.is-label .cursor__ring {
-    width: 88px;
-    height: 88px;
-    margin: -44px 0 0 -44px;
+    width: 84px;
+    height: 84px;
+    margin: -42px 0 0 -42px;
     background: var(--orange);
     border-color: var(--orange);
   }
@@ -82,11 +81,7 @@
     opacity: 0;
   }
   .cursor__label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #0b0b0b;
+    color: var(--ink);
     opacity: 0;
     transition: opacity 160ms ease;
   }

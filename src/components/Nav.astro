@@ -3,23 +3,15 @@ import { site } from '../data/site';
 ---
 
 <header class="nav" data-nav>
-  <div class="nav__blend">
-    <div class="wrap nav__row">
-      <a href="/" class="wordmark" aria-label={`${site.name} home`}>
-        <span class="wordmark__dot" aria-hidden="true"></span>
-        {site.name}
-      </a>
-      <nav aria-label="Main" class="nav__nav">
-        <ul class="nav__links">
-          <li><a href="#what-we-do" data-scroll-to>What we do</a></li>
-          <li><a href="#work" data-scroll-to>Work</a></li>
-          <li><a href="#results" data-scroll-to>Results</a></li>
-        </ul>
-      </nav>
-      <span class="nav__place mono">{site.city}</span>
-    </div>
-  </div>
-  <div class="wrap nav__cta-row">
+  <div class="wrap nav__row">
+    <a href="/" class="nav__mark mono" aria-label={`${site.name} home`} data-nav-tuck>{site.name}</a>
+    <nav aria-label="Main" class="nav__nav" data-nav-tuck>
+      <ul class="nav__links mono">
+        <li><a href="#what-we-do" data-scroll-to>What we do</a></li>
+        <li><a href="#work" data-scroll-to>Work</a></li>
+        <li><a href="#results" data-scroll-to>Results</a></li>
+      </ul>
+    </nav>
     <a href="/call" class="btn btn--primary nav__cta" data-magnetic>Book a call</a>
   </div>
 </header>
@@ -33,41 +25,26 @@ import { site } from '../data/site';
     z-index: 50;
     pointer-events: none;
   }
-  .nav__blend {
-    color: var(--bone);
-    transition: color 260ms ease, transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease;
-  }
-  .nav.is-tucked .nav__blend {
-    transform: translateY(-120%);
-    opacity: 0;
-    pointer-events: none;
-  }
-  .nav.is-light .nav__blend {
-    color: var(--ink);
-  }
   .nav__row {
     display: flex;
     align-items: center;
     gap: 32px;
-    padding-top: 24px;
-    padding-right: 180px;
+    padding-top: 20px;
   }
   .nav__row > * {
     pointer-events: auto;
   }
-  .wordmark {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    font-size: 17px;
-    white-space: nowrap;
+  [data-nav-tuck] {
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease;
   }
-  .wordmark__dot {
-    width: 8px;
-    height: 8px;
-    background: currentColor;
+  .nav.is-tucked [data-nav-tuck] {
+    transform: translateY(-160%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .nav__mark {
+    color: var(--ink);
+    white-space: nowrap;
   }
   .nav__nav {
     margin-left: auto;
@@ -78,43 +55,23 @@ import { site } from '../data/site';
     margin: 0;
     padding: 0;
     gap: 28px;
-    font-size: 15px;
-    opacity: 0.75;
+    color: var(--muted);
   }
   .nav__links a:hover {
-    opacity: 1;
-  }
-  .nav__place {
-    display: none;
-    opacity: 0.6;
-  }
-  .nav__cta-row {
-    position: absolute;
-    top: 16px;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: flex-end;
-    pointer-events: none;
+    color: var(--ink);
   }
   .nav__cta {
-    pointer-events: auto;
-    min-height: 46px;
-    padding: 0 20px;
-    font-size: 15px;
-    background: var(--orange);
-    color: #0b0b0b;
-    border-color: var(--orange);
-  }
-  .nav__cta::before {
-    background: var(--orange-dark);
+    margin-left: auto;
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: 13px;
   }
   @media (min-width: 900px) {
     .nav__links {
       display: flex;
     }
-    .nav__place {
-      display: inline;
+    .nav__cta {
+      margin-left: 0;
     }
   }
 </style>
