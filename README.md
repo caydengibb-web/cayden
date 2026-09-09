@@ -5,6 +5,7 @@ Two-page marketing site plus a thank-you page. Built with Astro, plain HTML and 
 - `/` is the general site.
 - `/call` is the ad landing page. One job: book a call.
 - `/booked` is the thank-you page after a booking.
+- `/form` is a private daily weigh-in page for your phone. Unlisted, out of search. See below.
 
 ## Run it on your computer
 
@@ -97,6 +98,20 @@ The site reads three values at build time. Locally they live in `.env`. On Netli
 
 In Calendly, set the event's redirect to `https://yoursite.com/booked` if your plan allows it. If it does not, `/call` shows a thank-you message in place of the calendar.
 
+## The weigh-in page (/form)
+
+`/form` is a small app for one person: log your weight once a day and watch the trend, next to a board of the physiques you are working toward. It is one file, `src/pages/form.astro`, with no framework. Everything you enter stays in your phone's browser storage. Nothing is sent to the site or anywhere else.
+
+Put it on your phone:
+
+1. Open `https://yoursite.com/form` in Safari (or Chrome on Android).
+2. Tap Share, then Add to Home Screen. It opens full screen like an app and keeps working offline.
+3. Start logging from the Home Screen version. The Safari tab and the Home Screen app keep separate storage, so pick one and stay with it. Settings has Export and Import if you ever need to move your entries.
+
+Board images are the ones you add: save a pin to your camera roll, then tap Add on the board. A direct image link works too. Images are stored on the phone in IndexedDB and never uploaded.
+
+Files that belong to it: `public/form.webmanifest` (name, icon, full-screen mode), `public/form-sw.js` (offline cache, scoped to `/form` only), the `form-icon-*.png` files in `public`, and the `/form` header rules in `netlify.toml`. The page is excluded from the sitemap in `astro.config.mjs`.
+
 ## Deploy
 
 Netlify builds the site every time you push to GitHub.
@@ -113,7 +128,8 @@ After that, every push to the main branch goes live in about a minute.
 
 ```
 public/            files served as-is
-  fonts/           Inter Tight, self-hosted
+  fonts/           Inter Tight, Instrument Serif, JetBrains Mono, self-hosted
+  form-*           icon, manifest, and offline worker for the /form page
   img/             still images for video boxes
   video/           hero loop and poster
   og.png           share image

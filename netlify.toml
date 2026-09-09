@@ -15,7 +15,7 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
     Cross-Origin-Opener-Policy = "same-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.facebook.com https://i.vimeocdn.com; font-src 'self'; media-src 'self'; frame-src https://player.vimeo.com https://calendly.com https://*.calendly.com; connect-src 'self' https:; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; media-src 'self'; frame-src https://player.vimeo.com https://calendly.com https://*.calendly.com; connect-src 'self' https:; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
 
 # Ad landing page and thank-you page stay out of search.
 [[headers]]
@@ -27,6 +27,18 @@
   for = "/booked"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
+
+# /form is a private page. Out of search, and its offline worker must never
+# be served stale.
+[[headers]]
+  for = "/form"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+[[headers]]
+  for = "/form-sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
 
 # Fonts and video never change once shipped. Cache them for a year.
 [[headers]]
