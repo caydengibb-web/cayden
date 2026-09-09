@@ -10,8 +10,8 @@ export default defineConfig({
   build: { format: 'file', inlineStylesheets: 'auto' },
   integrations: [
     sitemap({
-      // Ad landing and thank-you pages stay out of the sitemap.
-      filter: (page) => !page.endsWith('/call') && !page.endsWith('/booked'),
+      // Ad landing, thank-you, and the private /form page stay out of the sitemap.
+      filter: (page) => !page.endsWith('/call') && !page.endsWith('/booked') && !page.endsWith('/form'),
     }),
   ],
 });

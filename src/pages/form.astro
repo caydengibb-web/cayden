@@ -1,0 +1,2640 @@
+---
+/**
+ * /form. A private daily weigh-in page for your phone.
+ *
+ * Not linked from the site and kept out of search. Everything typed here
+ * stays in the phone's browser storage. Nothing is sent anywhere. Add it
+ * to the Home Screen and it opens full screen like an app (manifest:
+ * /form.webmanifest, offline cache: /form-sw.js).
+ *
+ * The page is self-contained on purpose: one file with plain CSS and JS,
+ * so it can be copied anywhere as a single HTML document.
+ */
+---
+
+<!doctype html>
+<html lang="en-CA" data-look="noir">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Form</title>
+    <meta name="description" content="A daily weigh-in." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/form.webmanifest" />
+    <link rel="apple-touch-icon" href="/form-icon-180.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Form" />
+    <link rel="preload" href="/fonts/inter-tight-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/instrument-serif-latin-400-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Pick the saved look before first paint so the page never flashes. -->
+    <script is:inline>
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('form.v1') || '{}');
+          if (s.look === 'bone') document.documentElement.setAttribute('data-look', 'bone');
+        } catch (e) {}
+      })();
+    </script>
+
+    <style is:inline>
+      /* FONTS (self-hosted) */
+      @font-face {
+        font-family: 'Inter Tight';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/inter-tight-latin-400-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter Tight';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/fonts/inter-tight-latin-500-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Inter Tight';
+        font-style: normal;
+        font-weight: 800;
+        font-display: swap;
+        src: url('/fonts/inter-tight-latin-800-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: italic;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif-latin-400-italic.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Instrument Serif';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/instrument-serif-latin-400-normal.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
+      }
+      /* /FONTS */
+
+      /* ------------------------------------------------------------
+         Tokens. Noir is the default: ink ground, bone type, no colour.
+         Bone is the same page printed on paper.
+         ------------------------------------------------------------ */
+      :root {
+        --ink: #0a0a0a;
+        --carbon: #141413;
+        --smoke: #262524;
+        --ash: #8d8a83;
+        --bone: #ece7dd;
+
+        --bg: var(--ink);
+        --bg-rgb: 10, 10, 10;
+        --surface: var(--carbon);
+        --text: var(--bone);
+        --text-rgb: 236, 231, 221;
+        --muted: var(--ash);
+        --rule: rgba(236, 231, 221, 0.14);
+        --track: var(--smoke);
+        --fill: var(--bone);
+        --on-fill: var(--ink);
+        --grain: 0.07;
+
+        --sans: 'Inter Tight', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        --serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+        --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+        --gutter: 20px;
+        --max: 480px;
+        --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+        color-scheme: dark;
+      }
+      html[data-look='bone'] {
+        --bg: #f1ede4;
+        --bg-rgb: 241, 237, 228;
+        --surface: #e7e2d8;
+        --text: #111110;
+        --text-rgb: 17, 17, 16;
+        --muted: #6a665f;
+        --rule: rgba(17, 17, 16, 0.14);
+        --track: #d8d2c6;
+        --fill: #111110;
+        --on-fill: #f1ede4;
+        --grain: 0.05;
+        color-scheme: light;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      html {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 16px;
+        line-height: 1.45;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        background: var(--bg);
+        color: var(--text);
+        overflow-x: hidden;
+      }
+      body.locked {
+        overflow: hidden;
+      }
+      /* Film grain over everything. Cheap: one tiled SVG noise texture. */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        pointer-events: none;
+        opacity: var(--grain);
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        background-size: 180px 180px;
+        mix-blend-mode: overlay;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+        color: inherit;
+      }
+      button {
+        background: none;
+        border: 0;
+        padding: 0;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      :focus-visible {
+        outline: 2px solid var(--text);
+        outline-offset: 3px;
+      }
+      p,
+      h1,
+      h2,
+      h3,
+      ol,
+      ul {
+        margin: 0;
+      }
+      ol,
+      ul {
+        padding: 0;
+        list-style: none;
+      }
+
+      .mono {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        line-height: 1.4;
+      }
+      .serif {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      /* ------------------------------------------------------------
+         Page frame
+         ------------------------------------------------------------ */
+      .app {
+        max-width: var(--max);
+        margin: 0 auto;
+        min-height: 100svh;
+        position: relative;
+      }
+      @media (min-width: 560px) {
+        .app {
+          border-left: 1px solid var(--rule);
+          border-right: 1px solid var(--rule);
+        }
+      }
+
+      /* ------------------------------------------------------------
+         Cover. The poster at the top: today's reference image (from the
+         board) behind the number, or a typographic cover when there is
+         no image yet.
+         ------------------------------------------------------------ */
+      .cover {
+        position: relative;
+        min-height: 72svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: calc(14px + env(safe-area-inset-top)) var(--gutter) 22px;
+        overflow: hidden;
+        isolation: isolate;
+      }
+      .cover__media {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background: var(--bg);
+      }
+      .cover__media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(0.35) contrast(1.05) brightness(0.92);
+      }
+      html[data-look='bone'] .cover__media img {
+        filter: grayscale(0.35) contrast(1.02) brightness(1.02);
+      }
+      .cover__scrim {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(
+          to bottom,
+          rgba(var(--bg-rgb), 0.78) 0%,
+          rgba(var(--bg-rgb), 0.3) 18%,
+          rgba(var(--bg-rgb), 0.18) 40%,
+          rgba(var(--bg-rgb), 0.6) 58%,
+          rgba(var(--bg-rgb), 0.94) 78%,
+          rgba(var(--bg-rgb), 1) 100%
+        );
+      }
+      .cover.has-photo .cover__top .mono {
+        color: var(--text);
+      }
+      .cover:not(.has-photo) .cover__scrim {
+        display: none;
+      }
+      /* Watermark for the typographic cover: the day count, faint and huge. */
+      .cover__mark {
+        position: absolute;
+        right: -0.04em;
+        top: calc(8px + env(safe-area-inset-top));
+        z-index: -1;
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 300px;
+        line-height: 0.8;
+        letter-spacing: -0.06em;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(var(--text-rgb), 0.16);
+        user-select: none;
+        pointer-events: none;
+      }
+      .cover.has-photo .cover__mark {
+        display: none;
+      }
+      .cover__top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .brand {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 30px;
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .brand::after {
+        content: '.';
+      }
+      .cover__meta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+        margin: -8px -8px -8px 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+      }
+      .icon-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+      }
+      .cover__body {
+        display: grid;
+        gap: 22px;
+        padding-top: 48px;
+      }
+      .daily {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 33px;
+        line-height: 1.06;
+        letter-spacing: -0.015em;
+        max-width: 15ch;
+        text-wrap: balance;
+      }
+      .daily--intro {
+        font-size: 44px;
+      }
+      .daily-sub {
+        margin-top: 10px;
+        max-width: 34ch;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      .hero {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .hero__num {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 118px;
+        line-height: 0.86;
+        letter-spacing: -0.055em;
+        font-variant-numeric: proportional-nums;
+        margin-left: -0.04em;
+      }
+      .hero__unit {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .hero__sub {
+        margin-top: 12px;
+        color: var(--muted);
+      }
+      .hero__sub b {
+        color: var(--text);
+        font-weight: 400;
+      }
+
+      .meter {
+        display: grid;
+        gap: 10px;
+      }
+      .meter__track {
+        height: 2px;
+        background: var(--track);
+        position: relative;
+      }
+      .meter__fill {
+        position: absolute;
+        left: 0;
+        top: -1px;
+        height: 4px;
+        width: 0%;
+        background: var(--fill);
+        transition: width 900ms var(--ease);
+      }
+      .meter__ends {
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+      }
+      .meter__ends b {
+        color: var(--text);
+        font-weight: 400;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 56px;
+        padding: 0 22px;
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        border: 1px solid var(--text);
+        color: var(--text);
+        transition:
+          transform 140ms var(--ease),
+          background 140ms var(--ease),
+          color 140ms var(--ease);
+      }
+      .btn:active {
+        transform: scale(0.985);
+      }
+      .btn--primary {
+        background: var(--fill);
+        color: var(--on-fill);
+        border-color: var(--fill);
+        width: 100%;
+      }
+      .btn--ghost {
+        min-height: 36px;
+        padding: 0 14px;
+        border-color: var(--rule);
+      }
+      .btn--danger {
+        border-color: var(--rule);
+        color: var(--muted);
+      }
+      .btn--block {
+        width: 100%;
+      }
+      .link {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      /* ------------------------------------------------------------
+         Sections
+         ------------------------------------------------------------ */
+      .sec {
+        padding: 30px var(--gutter);
+        border-top: 1px solid var(--rule);
+      }
+      .sec__head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .sec__title {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        font-size: 28px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .seg {
+        display: inline-flex;
+        border: 1px solid var(--rule);
+      }
+      .seg button {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        padding: 8px 10px;
+        color: var(--muted);
+        min-width: 40px;
+      }
+      .seg button.on {
+        background: var(--fill);
+        color: var(--on-fill);
+      }
+      .seg--wide button {
+        flex: 1;
+        padding: 12px 10px;
+      }
+
+      /* Banners */
+      .banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px var(--gutter);
+        border-top: 1px solid var(--rule);
+        color: var(--muted);
+      }
+      .banner button {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--text);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        white-space: nowrap;
+      }
+      .banner--hint {
+        text-transform: none;
+        letter-spacing: 0;
+        font-family: var(--sans);
+        font-size: 14px;
+      }
+      .banner--hint b {
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      /* ------------------------------------------------------------
+         Chart
+         ------------------------------------------------------------ */
+      .chart {
+        position: relative;
+        touch-action: pan-y;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .chart svg {
+        display: block;
+        width: 100%;
+        height: 232px;
+        overflow: visible;
+      }
+      .chart .grid line {
+        stroke: var(--rule);
+        stroke-width: 1;
+      }
+      .chart .goal line {
+        stroke: var(--muted);
+        stroke-width: 1;
+        stroke-dasharray: 3 4;
+      }
+      .chart .daily-line {
+        fill: none;
+        stroke: var(--muted);
+        stroke-width: 1.25;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+        opacity: 0.85;
+      }
+      .chart .daily-dot {
+        fill: var(--muted);
+        stroke: var(--bg);
+        stroke-width: 2;
+      }
+      .chart .trend-line {
+        fill: none;
+        stroke: var(--text);
+        stroke-width: 2;
+        stroke-linejoin: round;
+        stroke-linecap: round;
+      }
+      .chart .trend-area {
+        fill: var(--text);
+        opacity: 0.07;
+      }
+      .chart .end-dot {
+        fill: var(--text);
+        stroke: var(--bg);
+        stroke-width: 2;
+      }
+      .chart text {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        fill: var(--muted);
+      }
+      .chart text.strong {
+        fill: var(--text);
+      }
+      .chart .cross line {
+        stroke: var(--text);
+        stroke-width: 1;
+        opacity: 0.6;
+      }
+      .chart .cross circle {
+        fill: var(--text);
+        stroke: var(--bg);
+        stroke-width: 2;
+      }
+      .tip {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        background: var(--fill);
+        color: var(--on-fill);
+        padding: 8px 10px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        pointer-events: none;
+        line-height: 1.5;
+      }
+      .tip b {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+        text-transform: none;
+      }
+      .chart__empty {
+        min-height: 160px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        color: var(--muted);
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 22px;
+        border: 1px solid var(--rule);
+        padding: 20px;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 14px;
+        color: var(--muted);
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .legend i {
+        display: inline-block;
+        width: 18px;
+        height: 0;
+        border-top: 2px solid var(--text);
+      }
+      .legend i.thin {
+        border-top-width: 1px;
+        border-top-color: var(--muted);
+      }
+      .legend i.dash {
+        border-top-width: 1px;
+        border-top-style: dashed;
+        border-top-color: var(--muted);
+      }
+
+      /* ------------------------------------------------------------
+         Stats
+         ------------------------------------------------------------ */
+      .stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-top: 1px solid var(--rule);
+      }
+      .stat {
+        padding: 22px var(--gutter);
+        display: grid;
+        gap: 8px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .stat:nth-child(odd) {
+        border-right: 1px solid var(--rule);
+      }
+      .stat__label {
+        color: var(--muted);
+      }
+      .stat__val {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 34px;
+        line-height: 1;
+        letter-spacing: -0.035em;
+      }
+      .stat__val small {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      .insight {
+        padding: 18px var(--gutter);
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 20px;
+        line-height: 1.25;
+        color: var(--text);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      /* ------------------------------------------------------------
+         Board. A masonry of the images you save, plus a few typographic
+         cards in the same voice.
+         ------------------------------------------------------------ */
+      .board__hint {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+        max-width: 40ch;
+        margin: -6px 0 18px;
+      }
+      .masonry {
+        columns: 2;
+        column-gap: 8px;
+      }
+      .pin {
+        break-inside: avoid;
+        margin: 0 0 8px;
+        position: relative;
+        background: var(--surface);
+        overflow: hidden;
+      }
+      .pin button.pin__hit {
+        display: block;
+        width: 100%;
+      }
+      .pin img {
+        width: 100%;
+        height: auto;
+        display: block;
+        filter: grayscale(0.3) contrast(1.03);
+        transition: filter 300ms var(--ease);
+      }
+      html.colour .pin img,
+      html.colour .cover__media img {
+        filter: none;
+      }
+      .card {
+        padding: 22px 18px;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        border: 1px solid var(--rule);
+      }
+      .card--serif {
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 27px;
+        line-height: 1.02;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+      }
+      .card--mono {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        line-height: 1.7;
+      }
+      .card--sans {
+        font-family: var(--sans);
+        font-weight: 800;
+        font-size: 34px;
+        line-height: 0.92;
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+      }
+      .card--inverse {
+        background: var(--fill);
+        color: var(--on-fill);
+        border-color: var(--fill);
+      }
+      .card--tall {
+        min-height: 220px;
+      }
+      .card--live .live__n {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 56px;
+        line-height: 0.9;
+        letter-spacing: -0.05em;
+      }
+      .card--live .live__l {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.75;
+      }
+      .pin--add {
+        border: 1px dashed var(--rule);
+        min-height: 120px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .pin--add button {
+        width: 100%;
+        min-height: 120px;
+        color: inherit;
+      }
+
+      /* ------------------------------------------------------------
+         History
+         ------------------------------------------------------------ */
+      .hist li {
+        border-top: 1px solid var(--rule);
+      }
+      .hist li:last-child {
+        border-bottom: 1px solid var(--rule);
+      }
+      .hist button {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        align-items: baseline;
+        gap: 14px;
+        padding: 14px 0;
+        text-align: left;
+      }
+      .hist .h-date {
+        color: var(--muted);
+      }
+      .hist .h-val {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+      }
+      .hist .h-delta {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        min-width: 44px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .hist .h-delta.best {
+        color: var(--text);
+      }
+      .hist__more {
+        margin-top: 14px;
+      }
+      .empty {
+        color: var(--muted);
+        font-family: var(--serif);
+        font-style: italic;
+        font-size: 20px;
+      }
+
+      .foot {
+        padding: 30px var(--gutter) calc(30px + env(safe-area-inset-bottom));
+        color: var(--muted);
+        display: grid;
+        gap: 8px;
+      }
+
+      /* ------------------------------------------------------------
+         Sheets (bottom panels), viewer, toast
+         ------------------------------------------------------------ */
+      .sheet {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .sheet__back {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.62);
+        opacity: 0;
+        transition: opacity 240ms var(--ease);
+      }
+      .sheet__panel {
+        position: relative;
+        width: 100%;
+        max-width: var(--max);
+        max-height: 92svh;
+        overflow: auto;
+        background: var(--bg);
+        border-top: 1px solid var(--rule);
+        padding: 18px var(--gutter) calc(22px + env(safe-area-inset-bottom));
+        transform: translateY(102%);
+        transition: transform 300ms var(--ease);
+      }
+      .sheet.is-open .sheet__back {
+        opacity: 1;
+      }
+      .sheet.is-open .sheet__panel {
+        transform: translateY(0);
+      }
+      .sheet__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+      .sheet__title {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        font-size: 28px;
+        line-height: 1;
+      }
+      .field {
+        display: grid;
+        gap: 8px;
+        padding: 16px 0;
+        border-top: 1px solid var(--rule);
+      }
+      .field > label,
+      .field__label {
+        color: var(--muted);
+      }
+      .field input[type='text'],
+      .field input[type='date'],
+      .field textarea {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--rule);
+        padding: 8px 0;
+        font-size: 18px;
+        min-height: 44px;
+        border-radius: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .field input::placeholder {
+        color: var(--muted);
+        opacity: 1;
+      }
+      .field textarea {
+        font-family: var(--mono);
+        font-size: 12px;
+        min-height: 110px;
+        resize: vertical;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .row--split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .switch {
+        position: relative;
+        width: 46px;
+        height: 26px;
+        flex: none;
+        border: 1px solid var(--text);
+        background: transparent;
+      }
+      .switch::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        background: var(--text);
+        transition: transform 180ms var(--ease);
+      }
+      .switch[aria-checked='false'] {
+        border-color: var(--muted);
+      }
+      .switch[aria-checked='false']::after {
+        background: var(--muted);
+        transform: translateX(0);
+      }
+      .switch[aria-checked='true']::after {
+        transform: translateX(20px);
+      }
+
+      /* Weigh-in entry */
+      .weigh {
+        display: grid;
+        grid-template-columns: 52px 1fr 52px;
+        align-items: center;
+        gap: 6px;
+        padding: 14px 0 6px;
+      }
+      .weigh input {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--rule);
+        text-align: center;
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 64px;
+        letter-spacing: -0.05em;
+        line-height: 1.1;
+        padding: 0 0 4px;
+        border-radius: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      .weigh input::placeholder {
+        color: var(--muted);
+        opacity: 0.5;
+      }
+      .step {
+        width: 52px;
+        height: 52px;
+        border: 1px solid var(--rule);
+        font-family: var(--sans);
+        font-weight: 400;
+        font-size: 28px;
+        line-height: 1;
+      }
+      .weigh__unit {
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .sheet__actions {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      /* Viewer */
+      .viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(var(--bg-rgb), 0.97);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+      }
+      .viewer__bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(12px + env(safe-area-inset-top)) var(--gutter) 12px;
+      }
+      .viewer img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .viewer__foot {
+        padding: 12px var(--gutter) calc(18px + env(safe-area-inset-bottom));
+        display: flex;
+        justify-content: center;
+      }
+
+      /* Toast */
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(24px + env(safe-area-inset-bottom));
+        transform: translate(-50%, 8px);
+        z-index: 70;
+        background: var(--fill);
+        color: var(--on-fill);
+        padding: 12px 18px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition:
+          opacity 200ms var(--ease),
+          transform 200ms var(--ease);
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      /* Entrance */
+      .rise {
+        animation: rise 700ms var(--ease) both;
+      }
+      .rise:nth-child(2) {
+        animation-delay: 60ms;
+      }
+      .rise:nth-child(3) {
+        animation-delay: 120ms;
+      }
+      .rise:nth-child(4) {
+        animation-delay: 180ms;
+      }
+      .rise:nth-child(5) {
+        animation-delay: 240ms;
+      }
+      @keyframes rise {
+        from {
+          opacity: 0.001;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .pop {
+        animation: pop 420ms var(--ease);
+      }
+      @keyframes pop {
+        0% {
+          transform: scale(0.96);
+        }
+        60% {
+          transform: scale(1.015);
+        }
+        100% {
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <!-- Cover -->
+      <header class="cover" id="cover">
+        <div class="cover__media" id="coverMedia" aria-hidden="true"></div>
+        <div class="cover__scrim" aria-hidden="true"></div>
+        <div class="cover__mark" id="coverMark" aria-hidden="true">01</div>
+
+        <div class="cover__top rise">
+          <h1 class="brand">Form</h1>
+          <div class="cover__meta">
+            <span class="mono muted" id="dateLine"></span>
+            <button class="icon-btn" id="openSettings" aria-label="Settings">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="4" y1="7" x2="20" y2="7"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="4" y1="17" x2="20" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="cover__body">
+          <div class="rise">
+            <p class="daily" id="dailyLine">Start with today's number.</p>
+            <p class="daily-sub" id="dailySub" hidden></p>
+          </div>
+
+          <div class="rise" id="heroWrap">
+            <div class="hero">
+              <span class="hero__num" id="heroNum">0</span>
+              <span class="hero__unit" id="heroUnit">lb</span>
+            </div>
+            <p class="hero__sub mono" id="heroSub"></p>
+          </div>
+
+          <div class="meter rise" id="meter" hidden>
+            <div class="meter__track"><div class="meter__fill" id="meterFill"></div></div>
+            <div class="meter__ends mono">
+              <span id="meterStart"></span>
+              <span><b id="meterPct"></b></span>
+              <span id="meterGoal"></span>
+            </div>
+          </div>
+
+          <div class="rise">
+            <button class="btn btn--primary" id="logBtn">Log today's weight</button>
+            <p class="mono muted" id="sampleLink" style="margin-top: 14px" hidden>
+              <button class="link" id="sampleBtn">Or see it with sample data</button>
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <div class="banner mono" id="sampleBanner" hidden>
+        <span>Sample data. Yours will replace it.</span>
+        <button id="clearSample">Clear</button>
+      </div>
+
+      <div class="banner banner--hint" id="installHint" hidden>
+        <span>To use this as an app: tap <b>Share</b>, then <b>Add to Home Screen</b>.</span>
+        <button id="dismissHint">Got it</button>
+      </div>
+
+      <!-- Trend -->
+      <section class="sec" id="chartSec">
+        <div class="sec__head">
+          <h2 class="sec__title">Trend</h2>
+          <div class="seg" role="group" aria-label="Range" id="rangeSeg">
+            <button data-range="30" class="on">30d</button>
+            <button data-range="90">90d</button>
+            <button data-range="365">1y</button>
+            <button data-range="all">All</button>
+          </div>
+        </div>
+        <div class="chart" id="chart">
+          <svg id="chartSvg" role="img" aria-label="Weight over time"></svg>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <div class="chart__empty" id="chartEmpty" hidden>Two weigh-ins draw the first line.</div>
+        <div class="legend mono" id="legend">
+          <span><i class="thin"></i>daily</span>
+          <span><i></i>trend</span>
+          <span id="legendGoal"><i class="dash"></i>goal</span>
+        </div>
+      </section>
+
+      <!-- Stats -->
+      <section class="stats" aria-label="Progress">
+        <div class="stat">
+          <span class="stat__label mono">Streak</span>
+          <span class="stat__val" id="stStreak">0<small>days</small></span>
+        </div>
+        <div class="stat">
+          <span class="stat__label mono">Trend weight</span>
+          <span class="stat__val" id="stTrend">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label mono">Per week</span>
+          <span class="stat__val" id="stRate">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat__label mono">Goal date</span>
+          <span class="stat__val" id="stEta">—</span>
+        </div>
+      </section>
+      <p class="insight" id="insight" hidden></p>
+
+      <!-- Board -->
+      <section class="sec" id="boardSec">
+        <div class="sec__head">
+          <h2 class="sec__title">Board</h2>
+          <button class="btn btn--ghost" id="addPin">+ Add</button>
+        </div>
+        <p class="board__hint" id="boardHint">
+          The physiques you are working toward. Save pins from Pinterest to your camera roll, then add them here.
+        </p>
+        <div class="masonry" id="masonry"></div>
+      </section>
+
+      <!-- History -->
+      <section class="sec" id="histSec">
+        <div class="sec__head">
+          <h2 class="sec__title">Log</h2>
+          <span class="mono muted" id="histCount"></span>
+        </div>
+        <ol class="hist" id="hist"></ol>
+        <p class="empty" id="histEmpty">Nothing logged yet.</p>
+        <p class="hist__more" id="histMoreWrap" hidden>
+          <button class="link" id="histMore">Show everything</button>
+        </p>
+      </section>
+
+      <footer class="foot mono">
+        <span>Everything stays on this device.</span>
+        <span>Back it up from the menu.</span>
+      </footer>
+    </div>
+
+    <!-- Weigh-in sheet -->
+    <div class="sheet" id="logSheet" hidden role="dialog" aria-modal="true" aria-labelledby="logTitle">
+      <div class="sheet__back" data-close></div>
+      <div class="sheet__panel">
+        <div class="sheet__head">
+          <h2 class="sheet__title" id="logTitle">Today</h2>
+          <button class="icon-btn" data-close aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="weigh">
+          <button class="step" id="stepDown" aria-label="Down 0.1">−</button>
+          <input id="weightInput" type="text" inputmode="decimal" autocomplete="off" placeholder="0.0" aria-label="Weight" />
+          <button class="step" id="stepUp" aria-label="Up 0.1">+</button>
+        </div>
+        <p class="weigh__unit mono" id="weighUnit">lb</p>
+
+        <div class="field">
+          <label for="dateInput">Date</label>
+          <input id="dateInput" type="date" />
+        </div>
+
+        <div class="field" id="goalField" hidden>
+          <label for="goalInputFirst">Goal weight</label>
+          <input id="goalInputFirst" type="text" inputmode="decimal" placeholder="Where you are headed" />
+        </div>
+
+        <div class="sheet__actions">
+          <button class="btn btn--primary" id="saveEntry">Save</button>
+          <button class="btn btn--danger" id="deleteEntry" hidden>Remove this entry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add to board sheet -->
+    <div class="sheet" id="pinSheet" hidden role="dialog" aria-modal="true" aria-labelledby="pinTitle">
+      <div class="sheet__back" data-close></div>
+      <div class="sheet__panel">
+        <div class="sheet__head">
+          <h2 class="sheet__title" id="pinTitle">Add to the board</h2>
+          <button class="icon-btn" data-close aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        <div class="sheet__actions" style="margin-top: 0">
+          <button class="btn btn--primary" id="pickPhotos">Choose from photos</button>
+        </div>
+        <div class="field" style="margin-top: 18px">
+          <label for="urlInput">Or paste an image link</label>
+          <input id="urlInput" type="text" inputmode="url" autocomplete="off" placeholder="https://i.pinimg.com/..." />
+        </div>
+        <div class="sheet__actions">
+          <button class="btn" id="addUrl">Add link</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings sheet -->
+    <div class="sheet" id="settingsSheet" hidden role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet__back" data-close></div>
+      <div class="sheet__panel">
+        <div class="sheet__head">
+          <h2 class="sheet__title" id="settingsTitle">Settings</h2>
+          <button class="icon-btn" data-close aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="field">
+          <span class="field__label mono">Units</span>
+          <div class="seg seg--wide" role="group" aria-label="Units" id="unitSeg">
+            <button data-unit="lb">lb</button>
+            <button data-unit="kg">kg</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="goalInput" class="mono">Goal weight</label>
+          <input id="goalInput" type="text" inputmode="decimal" placeholder="Not set" />
+        </div>
+
+        <div class="field">
+          <label for="startInput" class="mono">Starting weight</label>
+          <input id="startInput" type="text" inputmode="decimal" placeholder="Your first entry" />
+        </div>
+
+        <div class="field">
+          <label for="nameInput" class="mono">Your name</label>
+          <input id="nameInput" type="text" autocomplete="given-name" placeholder="Optional" />
+        </div>
+
+        <div class="field">
+          <span class="field__label mono">Look</span>
+          <div class="seg seg--wide" role="group" aria-label="Look" id="lookSeg">
+            <button data-look="noir">Noir</button>
+            <button data-look="bone">Bone</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="row">
+            <span class="mono" id="lblMono">Monochrome photos</span>
+            <button class="switch" role="switch" aria-checked="true" id="swMono" aria-labelledby="lblMono"></button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="row">
+            <span class="mono" id="lblCover">Board photo on the cover</span>
+            <button class="switch" role="switch" aria-checked="true" id="swCover" aria-labelledby="lblCover"></button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="row">
+            <span class="mono" id="lblQuotes">Quote cards on the board</span>
+            <button class="switch" role="switch" aria-checked="true" id="swQuotes" aria-labelledby="lblQuotes"></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field__label mono">Backup</span>
+          <div class="row--split">
+            <button class="btn" id="exportBtn">Export</button>
+            <button class="btn" id="importBtn">Import</button>
+          </div>
+          <div id="backupBox" hidden style="margin-top: 12px">
+            <textarea id="backupText" aria-label="Backup text" spellcheck="false"></textarea>
+            <div class="row--split" style="margin-top: 10px">
+              <button class="btn" id="copyBackup">Copy</button>
+              <button class="btn" id="restoreBackup">Restore</button>
+            </div>
+            <p class="mono muted" style="margin-top: 10px">Board photos are not included in the backup.</p>
+          </div>
+        </div>
+
+        <div class="field">
+          <button class="btn btn--danger btn--block" id="resetBtn">Erase everything</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image viewer -->
+    <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="Image">
+      <div class="viewer__bar">
+        <span class="mono muted" id="viewerMeta"></span>
+        <button class="icon-btn" id="viewerClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <img id="viewerImg" alt="" />
+      <div class="viewer__foot">
+        <button class="btn btn--danger" id="viewerRemove">Remove from board</button>
+      </div>
+    </div>
+
+    <input type="file" id="fileInput" accept="image/*" multiple hidden />
+    <div class="toast mono" id="toast" role="status" aria-live="polite"></div>
+
+    <script is:inline>
+      (function () {
+        'use strict';
+
+        /* ------------------------------------------------------------
+           Helpers
+           ------------------------------------------------------------ */
+        var $ = function (s, r) { return (r || document).querySelector(s); };
+        var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+        var KEY = 'form.v1';
+        var KG_PER_LB = 0.45359237;
+        var DAY = 86400000;
+        var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        var DAYS_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function pad(n) { return (n < 10 ? '0' : '') + n; }
+        function keyOf(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function dateOf(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+        function startOfDay(d) { return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); }
+        function daysBetween(a, b) { return Math.round((startOfDay(b) - startOfDay(a)) / DAY); }
+        function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+        function todayKey() { return keyOf(new Date()); }
+        function dayOfYear(d) { return Math.floor((startOfDay(d) - new Date(d.getFullYear(), 0, 1).getTime()) / DAY); }
+        function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+        function shortDate(d) { return MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+        function longDate(d) { return DAYS_LONG[d.getDay()] + ', ' + MONTHS_LONG[d.getMonth()] + ' ' + d.getDate(); }
+        function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+        function toUnit(kg) { return state.unit === 'lb' ? kg / KG_PER_LB : kg; }
+        function fromUnit(v) { return state.unit === 'lb' ? v * KG_PER_LB : v; }
+        function lbToKg(v) { return v * KG_PER_LB; }
+        function roundKg(kg) { return Math.round(kg * 10000) / 10000; }
+        /* "184.2" or "184" for the big number. */
+        function fmtHero(kg) { return toUnit(kg).toFixed(1).replace(/\.0$/, ''); }
+        /* Always one decimal, for lists and stats. */
+        function fmtW(kg) { return toUnit(kg).toFixed(1); }
+        /* Signed delta in the current unit, with a real minus sign. */
+        function fmtDelta(kg, dp) {
+          var v = toUnit(kg);
+          var r = Math.abs(v).toFixed(dp == null ? 1 : dp);
+          if (Number(r) === 0) return '0' + (dp === 0 ? '' : '.0');
+          return (v > 0 ? '+' : '−') + r;
+        }
+        function parseNum(s) {
+          if (s == null) return NaN;
+          var v = parseFloat(String(s).replace(',', '.').replace(/[^\d.\-]/g, ''));
+          return isFinite(v) ? v : NaN;
+        }
+        function setText(el, text) { if (el) el.textContent = text; }
+        function el(tag, cls, text) {
+          var e = document.createElement(tag);
+          if (cls) e.className = cls;
+          if (text != null) e.textContent = text;
+          return e;
+        }
+
+        /* ------------------------------------------------------------
+           State. One object in localStorage. Weights are stored in kg.
+           ------------------------------------------------------------ */
+        var DEFAULTS = {
+          unit: 'lb',
+          goalKg: null,
+          startKg: null,
+          name: '',
+          look: 'noir',
+          mono: true,
+          coverPhotos: true,
+          quotes: true,
+          entries: {},
+          sample: false,
+          hints: {},
+          range: '30'
+        };
+        var state = load();
+
+        function load() {
+          var s = {};
+          try { s = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { s = {}; }
+          var out = JSON.parse(JSON.stringify(DEFAULTS));
+          for (var j in s) out[j] = s[j];
+          if (!out.entries || typeof out.entries !== 'object') out.entries = {};
+          if (!out.hints || typeof out.hints !== 'object') out.hints = {};
+          return out;
+        }
+        function save() {
+          try { localStorage.setItem(KEY, JSON.stringify(state)); }
+          catch (e) { toast('Could not save. Storage is full.'); }
+        }
+
+        /* ------------------------------------------------------------
+           Derived numbers
+           ------------------------------------------------------------ */
+        function series() {
+          var keys = Object.keys(state.entries).sort();
+          var out = [];
+          for (var i = 0; i < keys.length; i++) {
+            var kg = Number(state.entries[keys[i]]);
+            if (!isFinite(kg)) continue;
+            out.push({ k: keys[i], d: dateOf(keys[i]), kg: kg });
+          }
+          return withTrend(out);
+        }
+
+        /* Exponentially smoothed trend. Aware of gaps: a missed week moves
+           the trend further toward that day's reading than a single day would. */
+        function withTrend(s) {
+          var t = null, prev = null;
+          for (var i = 0; i < s.length; i++) {
+            var p = s[i];
+            if (t === null) t = p.kg;
+            else {
+              var gap = Math.max(1, daysBetween(prev, p.d));
+              var a = 1 - Math.pow(0.9, gap);
+              t = t + a * (p.kg - t);
+            }
+            p.trend = t;
+            prev = p.d;
+          }
+          return s;
+        }
+
+        /* Slope of the last 14 days of raw readings, kg per day. */
+        function rateOf(s) {
+          if (s.length < 5) return null;
+          var end = s[s.length - 1].d;
+          var win = s.filter(function (p) { return daysBetween(p.d, end) <= 14; });
+          if (win.length < 5) return null;
+          if (daysBetween(win[0].d, end) < 7) return null;
+          var x0 = win[0].d, sx = 0, sy = 0, sxx = 0, sxy = 0, m = win.length;
+          for (var i = 0; i < m; i++) {
+            var x = daysBetween(x0, win[i].d), y = win[i].kg;
+            sx += x; sy += y; sxx += x * x; sxy += x * y;
+          }
+          var den = m * sxx - sx * sx;
+          if (!den) return null;
+          return (m * sxy - sx * sy) / den;
+        }
+
+        function pctOf(startKg, goalKg, kg) {
+          if (startKg == null || goalKg == null || kg == null || startKg === goalKg) return null;
+          return clamp((startKg - kg) / (startKg - goalKg), 0, 1);
+        }
+
+        function summary() {
+          var s = series();
+          var n = s.length;
+          var last = n ? s[n - 1] : null;
+          var prev = n > 1 ? s[n - 2] : null;
+          var first = n ? s[0] : null;
+          var startKg = state.startKg != null ? state.startKg : (first ? first.kg : null);
+          var goalKg = state.goalKg;
+          var dir = -1;
+          if (goalKg != null && startKg != null && goalKg !== startKg) dir = goalKg > startKg ? 1 : -1;
+
+          var today = todayKey();
+          var loggedToday = Object.prototype.hasOwnProperty.call(state.entries, today);
+          var streak = 0;
+          var cursor = loggedToday ? new Date() : addDays(new Date(), -1);
+          while (Object.prototype.hasOwnProperty.call(state.entries, keyOf(cursor)) && streak < 100000) {
+            streak++;
+            cursor = addDays(cursor, -1);
+          }
+
+          var best = null, prevBest = null;
+          for (var i = 0; i < n; i++) {
+            var v = s[i].kg;
+            if (i < n - 1) prevBest = prevBest == null ? v : (dir < 0 ? Math.min(prevBest, v) : Math.max(prevBest, v));
+            best = best == null ? v : (dir < 0 ? Math.min(best, v) : Math.max(best, v));
+          }
+          var isNewBest = !!(last && prevBest != null && (dir < 0 ? last.kg < prevBest : last.kg > prevBest));
+
+          var rate = rateOf(s);
+          var eta = null;
+          if (rate != null && last && goalKg != null) {
+            var rem = goalKg - last.trend;
+            if (Math.abs(rate * 7) >= 0.05 && Math.sign(rem) === Math.sign(rate) && rem !== 0) {
+              var days = rem / rate;
+              if (days <= 730) eta = addDays(new Date(), Math.round(days));
+            }
+          }
+
+          var pct = last ? pctOf(startKg, goalKg, last.kg) : null;
+          var prevPct = prev ? pctOf(startKg, goalKg, prev.kg) : null;
+
+          /* Plateau: the trend barely moved over the last two weeks while
+             there is still ground to cover. */
+          var plateau = false;
+          if (n >= 10 && last && goalKg != null && pct != null && pct < 1) {
+            var ago = null;
+            for (var j = n - 1; j >= 0; j--) if (daysBetween(s[j].d, last.d) >= 14) { ago = s[j]; break; }
+            if (ago && Math.abs(last.trend - ago.trend) < 0.25 && daysBetween(last.d, new Date()) <= 2) plateau = true;
+          }
+
+          return {
+            s: s, n: n, last: last, prev: prev, first: first,
+            startKg: startKg, goalKg: goalKg, dir: dir,
+            loggedToday: loggedToday, streak: streak,
+            best: best, isNewBest: isNewBest,
+            rate: rate, eta: eta, pct: pct, prevPct: prevPct,
+            gap: last ? daysBetween(last.d, new Date()) : null,
+            plateau: plateau,
+            dayNo: first ? daysBetween(first.d, new Date()) + 1 : 0
+          };
+        }
+
+        /* ------------------------------------------------------------
+           The daily line. One sentence or two, picked from what today
+           looks like. Rotations are stable for the whole day.
+           ------------------------------------------------------------ */
+        var COPY = {
+          loggedPool: [
+            'Logged. See you tomorrow.',
+            'Written down. The habit is the win today.',
+            'Done for today. Quiet work like this adds up.',
+            'On the record. Tomorrow, same time.',
+            'That is the whole ritual. Go live your day.'
+          ],
+          upPool: [
+            'Up a touch from last time. Water and salt push the daily number around. The trend line is the one to watch.',
+            'A higher number today changes nothing about the plan. Same thing tomorrow.'
+          ],
+          waitingPool: [
+            'Day {n} is waiting on one number.',
+            'Step on the scale before the day gets loud.',
+            'Ninety seconds now buys a cleaner trend line all month.'
+          ],
+          promptPool: [
+            'Step on the scale and write it down. That is the whole ritual.',
+            "Today's number is worth more than a perfect week you never start.",
+            'The scale is only information. Give it a number to work with.'
+          ],
+          backPool: [
+            'Welcome back. The gap is already behind you.',
+            'Good to have you back. Log today and the streak starts again.'
+          ],
+          streak: {
+            3: 'Three days straight. This is how it starts.',
+            7: 'Seven in a row. Nobody drifts into a week of this.',
+            14: 'Two weeks straight. This is who you are now.',
+            21: 'Twenty-one days. The habit has outlasted the motivation, which is the point.',
+            30: 'Thirty days. Nobody does that by accident.',
+            50: 'Fifty days. Discipline is a form of self-respect.',
+            75: 'Seventy-five days. The mirror is starting to agree with the scale.',
+            100: 'One hundred days. Look at what a single number a day built.',
+            150: 'One hundred and fifty days. This is a lifestyle with receipts.',
+            200: 'Two hundred days. Most people never see this screen.',
+            365: 'A full year, every day. Remarkable.'
+          },
+          pct: {
+            25: 'A quarter of the way. The scale is agreeing with you.',
+            50: 'Halfway. The second half is built out of days like today.',
+            75: 'Three quarters there. Close enough to picture the finish.',
+            100: 'Goal reached. Take a photo, then set the next one.'
+          },
+          goalHeld: 'Goal weight. Hold it a week, then decide what comes next.',
+          bestPool: [
+            'New best. The work is showing.',
+            'Best number yet. Keep the same rhythm this week.'
+          ]
+        };
+
+        function pick(pool, seed) { return pool[Math.abs(seed) % pool.length]; }
+
+        function dailyLine(sum) {
+          var seed = dayOfYear(new Date());
+          var name = (state.name || '').trim();
+          if (!sum.n) {
+            return {
+              line: name ? 'Start with today’s number, ' + name + '.' : 'Start with today’s number.',
+              sub: 'One weigh-in each morning, before food. The trend does the rest.',
+              intro: true
+            };
+          }
+          if (sum.pct != null && sum.pct >= 1) {
+            if (sum.loggedToday && sum.prevPct != null && sum.prevPct < 1) return { line: COPY.pct[100] };
+            return { line: COPY.goalHeld };
+          }
+          if (sum.loggedToday) {
+            if (sum.isNewBest) return { line: pick(COPY.bestPool, seed) };
+            if (COPY.streak[sum.streak]) return { line: COPY.streak[sum.streak] };
+            if (sum.pct != null && sum.prevPct != null) {
+              var marks = [75, 50, 25];
+              for (var i = 0; i < marks.length; i++) {
+                var m = marks[i] / 100;
+                if (sum.pct >= m && sum.prevPct < m) return { line: COPY.pct[marks[i]] };
+              }
+            }
+            if (sum.prev && (sum.dir < 0 ? sum.last.kg > sum.prev.kg : sum.last.kg < sum.prev.kg) && Math.abs(sum.last.kg - sum.prev.kg) >= 0.2) {
+              return { line: pick(COPY.upPool, seed) };
+            }
+            return { line: pick(COPY.loggedPool, seed) };
+          }
+          if (sum.gap != null && sum.gap >= 3) return { line: pick(COPY.backPool, seed) };
+          if (sum.streak > 0) return { line: pick(COPY.waitingPool, seed).replace('{n}', String(sum.streak + 1)) };
+          return { line: pick(COPY.promptPool, seed) };
+        }
+
+        /* ------------------------------------------------------------
+           Render
+           ------------------------------------------------------------ */
+        var lastHero = null;
+
+        function render() {
+          var sum = summary();
+          renderCover(sum);
+          renderStats(sum);
+          renderChart(sum);
+          renderHistory(sum);
+          renderBoard(sum);
+          $('#sampleBanner').hidden = !state.sample;
+          $('#sampleLink').hidden = sum.n > 0;
+        }
+
+        function renderCover(sum) {
+          var now = new Date();
+          var dl = DAYS[now.getDay()] + ' · ' + shortDate(now);
+          if (sum.dayNo) dl = 'Day ' + sum.dayNo + ' · ' + dl;
+          setText($('#dateLine'), dl);
+          setText($('#coverMark'), pad(sum.dayNo || 1));
+
+          var copy = dailyLine(sum);
+          var lineEl = $('#dailyLine');
+          setText(lineEl, copy.line);
+          lineEl.classList.toggle('daily--intro', !!copy.intro);
+          var subEl = $('#dailySub');
+          subEl.hidden = !copy.sub;
+          setText(subEl, copy.sub || '');
+
+          var heroWrap = $('#heroWrap');
+          var meter = $('#meter');
+          var btn = $('#logBtn');
+          setText($('#heroUnit'), state.unit);
+
+          if (!sum.n) {
+            heroWrap.hidden = true;
+            meter.hidden = true;
+            setText(btn, 'Log your first weigh-in');
+            return;
+          }
+          heroWrap.hidden = false;
+          animateHero(sum.last.kg);
+
+          var parts = [];
+          if (sum.startKg != null) {
+            var since = sum.last.kg - sum.startKg;
+            parts.push('<b>' + fmtDelta(since) + ' ' + state.unit + '</b> since ' + shortDate(sum.first.d));
+          }
+          if (sum.goalKg != null) {
+            var rem = Math.abs(sum.goalKg - sum.last.kg);
+            parts.push(rem < 0.05 ? 'at goal' : '<b>' + fmtW(rem === 0 ? 0 : rem) + '</b> to go');
+          } else {
+            parts.push('<button class="link" id="setGoalLink">Set a goal</button>');
+          }
+          $('#heroSub').innerHTML = parts.join(' · ');
+          var sg = $('#setGoalLink');
+          if (sg) sg.addEventListener('click', function () { openSettings(); setTimeout(function () { $('#goalInput').focus(); }, 350); });
+
+          if (sum.pct != null) {
+            meter.hidden = false;
+            requestAnimationFrame(function () { $('#meterFill').style.width = (sum.pct * 100).toFixed(1) + '%'; });
+            setText($('#meterStart'), fmtHero(sum.startKg));
+            setText($('#meterPct'), Math.round(sum.pct * 100) + '%');
+            setText($('#meterGoal'), fmtHero(sum.goalKg) + ' goal');
+          } else {
+            meter.hidden = true;
+          }
+          setText(btn, sum.loggedToday ? 'Edit today’s weight' : 'Log today’s weight');
+        }
+
+        function animateHero(kg) {
+          var elNum = $('#heroNum');
+          var target = toUnit(kg);
+          var from = lastHero == null ? target - 2.4 : lastHero;
+          lastHero = target;
+          if (reduceMotion || Math.abs(target - from) < 0.05) { setText(elNum, fmtHero(kg)); return; }
+          var t0 = performance.now(), dur = 650;
+          (function tick(now) {
+            var p = clamp((now - t0) / dur, 0, 1);
+            var e = 1 - Math.pow(1 - p, 3);
+            var v = from + (target - from) * e;
+            elNum.textContent = p < 1 ? v.toFixed(1) : fmtHero(kg);
+            if (p < 1) requestAnimationFrame(tick);
+          })(t0);
+        }
+
+        function renderStats(sum) {
+          var st = $('#stStreak');
+          st.textContent = '';
+          st.appendChild(document.createTextNode(String(sum.streak)));
+          st.appendChild(el('small', null, sum.streak === 1 ? 'day' : 'days'));
+
+          setText($('#stTrend'), sum.last ? fmtW(sum.last.trend) : '—');
+
+          var rateEl = $('#stRate');
+          rateEl.textContent = '';
+          if (sum.rate != null) {
+            rateEl.appendChild(document.createTextNode(fmtDelta(sum.rate * 7)));
+            rateEl.appendChild(el('small', null, state.unit));
+          } else rateEl.textContent = '—';
+
+          setText($('#stEta'), sum.eta ? shortDate(sum.eta) : '—');
+
+          var ins = $('#insight');
+          if (sum.plateau) {
+            ins.hidden = false;
+            ins.textContent = 'The trend has sat still for two weeks. Tighten one meal a day and give it ten days.';
+          } else if (sum.n >= 5 && sum.rate == null && sum.loggedToday) {
+            ins.hidden = false;
+            ins.textContent = 'A weekly pace shows up after a full week of readings.';
+          } else ins.hidden = true;
+        }
+
+        function renderHistory(sum) {
+          var list = $('#hist');
+          list.textContent = '';
+          var items = sum.s.slice().reverse();
+          $('#histEmpty').hidden = items.length > 0;
+          setText($('#histCount'), items.length ? items.length + (items.length === 1 ? ' entry' : ' entries') : '');
+          var limit = showAllHistory ? items.length : 30;
+          $('#histMoreWrap').hidden = items.length <= 30 || showAllHistory;
+          for (var i = 0; i < Math.min(limit, items.length); i++) {
+            var p = items[i];
+            var next = sum.s[sum.s.length - 2 - i];
+            var li = el('li');
+            var b = el('button');
+            b.setAttribute('data-key', p.k);
+            b.appendChild(el('span', 'h-date mono', DAYS[p.d.getDay()] + ' · ' + shortDate(p.d) + (p.d.getFullYear() !== new Date().getFullYear() ? ' ' + p.d.getFullYear() : '')));
+            b.appendChild(el('span', 'h-val', fmtW(p.kg)));
+            var isBest = sum.best != null && Math.abs(p.kg - sum.best) < 1e-9;
+            var delta = el('span', 'h-delta' + (isBest ? ' best' : ''), next ? fmtDelta(p.kg - next.kg) : '');
+            if (isBest) delta.textContent = '✦ ' + delta.textContent;
+            b.appendChild(delta);
+            b.addEventListener('click', function (ev) { openLog(ev.currentTarget.getAttribute('data-key')); });
+            li.appendChild(b);
+            list.appendChild(li);
+          }
+        }
+        var showAllHistory = false;
+        $('#histMore').addEventListener('click', function () { showAllHistory = true; render(); });
+
+        /* ------------------------------------------------------------
+           Chart. Plain SVG. Daily readings thin, the trend heavy, the
+           goal dashed. A crosshair follows the finger.
+           ------------------------------------------------------------ */
+        var chartPts = [];
+        var chartGeo = null;
+
+        function niceStep(range) {
+          var raw = range / 3;
+          var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+          var r = raw / mag;
+          var step = r >= 5 ? 5 : r >= 2 ? 2 : 1;
+          return step * mag;
+        }
+
+        function renderChart(sum) {
+          var svg = $('#chartSvg');
+          var empty = $('#chartEmpty');
+          var legend = $('#legend');
+          svg.textContent = '';
+          $('#tip').hidden = true;
+          $$('#rangeSeg button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-range') === state.range); });
+
+          if (sum.n < 2) {
+            svg.parentNode.hidden = true;
+            empty.hidden = false;
+            legend.hidden = true;
+            return;
+          }
+          svg.parentNode.hidden = false;
+          empty.hidden = true;
+          legend.hidden = false;
+
+          var W = Math.max(280, svg.getBoundingClientRect().width || 340);
+          var H = 232;
+          var padL = 4, padR = 46, padT = 18, padB = 26;
+          svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+          var now = new Date();
+          var t1 = startOfDay(now);
+          var t0;
+          if (state.range === 'all') t0 = Math.min(startOfDay(sum.first.d), t1 - 13 * DAY);
+          else t0 = t1 - (Number(state.range) - 1) * DAY;
+          var pts = sum.s.filter(function (p) { return startOfDay(p.d) >= t0; });
+          if (pts.length < 2) { pts = sum.s.slice(-2); t0 = Math.min(t0, startOfDay(pts[0].d)); }
+          chartPts = pts;
+
+          var lo = Infinity, hi = -Infinity;
+          pts.forEach(function (p) { lo = Math.min(lo, p.kg, p.trend); hi = Math.max(hi, p.kg, p.trend); });
+          var goalU = sum.goalKg != null ? toUnit(sum.goalKg) : null;
+          var loU = toUnit(lo), hiU = toUnit(hi);
+          var span = Math.max(hiU - loU, state.unit === 'lb' ? 4 : 2);
+          var showGoal = goalU != null && goalU >= loU - span * 1.6 && goalU <= hiU + span * 1.6;
+          if (showGoal) { loU = Math.min(loU, goalU); hiU = Math.max(hiU, goalU); }
+          var padY = (hiU - loU) * 0.18 + (state.unit === 'lb' ? 0.8 : 0.4);
+          var yMin = loU - padY, yMax = hiU + padY;
+          var step = niceStep(yMax - yMin);
+          var tick0 = Math.ceil(yMin / step) * step;
+
+          var x = function (t) { return padL + ((t - t0) / Math.max(1, t1 - t0)) * (W - padL - padR); };
+          var y = function (u) { return padT + (1 - (u - yMin) / (yMax - yMin)) * (H - padT - padB); };
+          chartGeo = { x: x, y: y, W: W, H: H, padT: padT, padB: padB, padL: padL, padR: padR };
+
+          var NS = 'http://www.w3.org/2000/svg';
+          function node(tag, attrs, parent) {
+            var n = document.createElementNS(NS, tag);
+            for (var a in attrs) n.setAttribute(a, attrs[a]);
+            (parent || svg).appendChild(n);
+            return n;
+          }
+
+          /* grid + y labels */
+          var grid = node('g', { class: 'grid' });
+          for (var v = tick0; v <= yMax; v += step) {
+            var yy = y(v);
+            node('line', { x1: padL, x2: W - padR + 6, y1: yy, y2: yy }, grid);
+            var tx = node('text', { x: W - padR + 10, y: yy + 3.5 }, grid);
+            tx.textContent = String(Math.round(v * 10) / 10);
+          }
+
+          /* x labels: first, middle, last */
+          var xl = node('g', {});
+          [t0, (t0 + t1) / 2, t1].forEach(function (t, i) {
+            var d = new Date(t);
+            var tt = node('text', { x: x(t), y: H - 6, 'text-anchor': i === 0 ? 'start' : i === 2 ? 'end' : 'middle' }, xl);
+            tt.textContent = (shortDate(d) + (state.range === 'all' && sum.first.d.getFullYear() !== now.getFullYear() && i === 0 ? ' ' + d.getFullYear() : '')).toUpperCase();
+          });
+
+          /* goal line */
+          $('#legendGoal').hidden = !showGoal;
+          if (showGoal) {
+            var g = node('g', { class: 'goal' });
+            node('line', { x1: padL, x2: W - padR, y1: y(goalU), y2: y(goalU) }, g);
+            var gl = node('text', { x: padL, y: y(goalU) - 5 }, g);
+            gl.textContent = 'GOAL ' + fmtHero(sum.goalKg);
+          }
+
+          /* trend area + line */
+          var tPath = '', aPath = '';
+          pts.forEach(function (p, i) {
+            var px = x(startOfDay(p.d)), py = y(toUnit(p.trend));
+            tPath += (i ? 'L' : 'M') + px.toFixed(1) + ' ' + py.toFixed(1);
+          });
+          var firstX = x(startOfDay(pts[0].d)), lastX = x(startOfDay(pts[pts.length - 1].d));
+          aPath = tPath + 'L' + lastX.toFixed(1) + ' ' + (H - padB) + 'L' + firstX.toFixed(1) + ' ' + (H - padB) + 'Z';
+          node('path', { class: 'trend-area', d: aPath });
+
+          /* daily line + dots */
+          var dPath = '';
+          pts.forEach(function (p, i) {
+            dPath += (i ? 'L' : 'M') + x(startOfDay(p.d)).toFixed(1) + ' ' + y(toUnit(p.kg)).toFixed(1);
+          });
+          node('path', { class: 'daily-line', d: dPath });
+          if (pts.length <= 70) {
+            pts.forEach(function (p) {
+              node('circle', { class: 'daily-dot', cx: x(startOfDay(p.d)), cy: y(toUnit(p.kg)), r: 2.6 });
+            });
+          }
+          node('path', { class: 'trend-line', d: tPath });
+
+          /* end marker + direct label on the trend */
+          var lastP = pts[pts.length - 1];
+          var ex = x(startOfDay(lastP.d)), ey = y(toUnit(lastP.trend));
+          node('circle', { class: 'end-dot', cx: ex, cy: ey, r: 4.5 });
+          var lab = node('text', { class: 'strong', x: Math.min(ex, W - padR - 4), y: ey - 10, 'text-anchor': 'end' });
+          lab.textContent = fmtW(lastP.trend);
+
+          /* crosshair group, filled on hover */
+          node('g', { class: 'cross', id: 'cross' });
+        }
+
+        function chartHover(clientX) {
+          if (!chartGeo || !chartPts.length) return;
+          var svg = $('#chartSvg');
+          var rect = svg.getBoundingClientRect();
+          var px = ((clientX - rect.left) / rect.width) * chartGeo.W;
+          var best = null, bd = Infinity;
+          chartPts.forEach(function (p) {
+            var d = Math.abs(chartGeo.x(startOfDay(p.d)) - px);
+            if (d < bd) { bd = d; best = p; }
+          });
+          if (!best) return;
+          var cross = $('#cross');
+          cross.textContent = '';
+          var NS = 'http://www.w3.org/2000/svg';
+          var cx = chartGeo.x(startOfDay(best.d));
+          var line = document.createElementNS(NS, 'line');
+          line.setAttribute('x1', cx); line.setAttribute('x2', cx);
+          line.setAttribute('y1', chartGeo.padT - 6); line.setAttribute('y2', chartGeo.H - chartGeo.padB);
+          cross.appendChild(line);
+          var c1 = document.createElementNS(NS, 'circle');
+          c1.setAttribute('cx', cx); c1.setAttribute('cy', chartGeo.y(toUnit(best.trend))); c1.setAttribute('r', 4.5);
+          cross.appendChild(c1);
+          var tip = $('#tip');
+          tip.textContent = '';
+          var b = el('b', null, fmtW(best.kg) + ' ' + state.unit);
+          tip.appendChild(b);
+          tip.appendChild(document.createElement('br'));
+          tip.appendChild(document.createTextNode(shortDate(best.d) + ' · trend ' + fmtW(best.trend)));
+          tip.hidden = false;
+          var leftPx = (cx / chartGeo.W) * rect.width;
+          var tw = tip.offsetWidth || 120;
+          leftPx = clamp(leftPx, tw / 2, rect.width - tw / 2);
+          tip.style.left = leftPx + 'px';
+        }
+        function chartLeave() {
+          var cross = $('#cross');
+          if (cross) cross.textContent = '';
+          $('#tip').hidden = true;
+        }
+        (function wireChart() {
+          var c = $('#chart');
+          c.addEventListener('pointermove', function (e) { if (e.pointerType !== 'touch') chartHover(e.clientX); });
+          c.addEventListener('pointerleave', function (e) { if (e.pointerType !== 'touch') chartLeave(); });
+          c.addEventListener('touchstart', function (e) { chartHover(e.touches[0].clientX); }, { passive: true });
+          c.addEventListener('touchmove', function (e) { chartHover(e.touches[0].clientX); }, { passive: true });
+          c.addEventListener('touchend', function () { setTimeout(chartLeave, 1200); }, { passive: true });
+          $$('#rangeSeg button').forEach(function (b) {
+            b.addEventListener('click', function () { state.range = b.getAttribute('data-range'); save(); renderChart(summary()); });
+          });
+          var rt;
+          window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { renderChart(summary()); }, 120); });
+        })();
+
+        /* ------------------------------------------------------------
+           Board. Images live in IndexedDB (they are too big for
+           localStorage). Object URLs are cached per pin.
+           ------------------------------------------------------------ */
+        var pins = [];
+        var urlCache = {};
+        var idb = {
+          db: null,
+          ok: false,
+          open: function () {
+            var self = this;
+            return new Promise(function (res) {
+              if (!window.indexedDB) return res(false);
+              var r;
+              try { r = indexedDB.open('form-board', 1); } catch (e) { return res(false); }
+              r.onupgradeneeded = function () { r.result.createObjectStore('pins', { keyPath: 'id' }); };
+              r.onsuccess = function () { self.db = r.result; self.ok = true; res(true); };
+              r.onerror = function () { res(false); };
+              r.onblocked = function () { res(false); };
+            });
+          },
+          store: function (mode) { return this.db.transaction('pins', mode).objectStore('pins'); },
+          all: function () { return this.ok ? wrap(this.store('readonly').getAll()) : Promise.resolve([]); },
+          put: function (p) { return wrap(this.store('readwrite').put(p)); },
+          del: function (id) { return wrap(this.store('readwrite').delete(id)); },
+          clear: function () { return this.ok ? wrap(this.store('readwrite').clear()) : Promise.resolve(); }
+        };
+        function wrap(r) { return new Promise(function (res, rej) { r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+
+        function pinSrc(p) {
+          if (p.kind === 'url') return p.url;
+          if (!urlCache[p.id]) urlCache[p.id] = URL.createObjectURL(p.blob);
+          return urlCache[p.id];
+        }
+
+        var CARDS = [
+          { cls: 'card--serif', text: 'Discipline is a form of self-respect.' },
+          { cls: 'card--mono card--inverse', text: 'One number a day.' },
+          { cls: 'card--sans card--tall', text: 'Built daily.' },
+          { cls: 'card--serif card--inverse', text: 'The trend is the truth.' },
+          { cls: 'card--serif', text: 'Show up for the boring days.' },
+          { cls: 'card--sans card--inverse', text: 'Consistency compounds.' },
+          { cls: 'card--serif card--tall', text: 'Your future self is watching.' },
+          { cls: 'card--mono', text: 'One scale, before breakfast.' }
+        ];
+
+        function renderBoard(sum) {
+          var m = $('#masonry');
+          m.textContent = '';
+          document.documentElement.classList.toggle('colour', !state.mono);
+          $('#boardHint').hidden = pins.length > 0;
+
+          var items = [];
+          /* Live progress card first, once there is progress to show. */
+          if (sum.n && sum.startKg != null) {
+            var live = el('div', 'pin card card--live card--inverse');
+            live.appendChild(el('div', 'live__n', fmtDelta(sum.last.kg - sum.startKg)));
+            live.appendChild(el('div', 'live__l', state.unit + ' since ' + shortDate(sum.first.d) + ' · day ' + sum.dayNo));
+            items.push(live);
+          }
+          var sorted = pins.slice().sort(function (a, b) { return b.t - a.t; });
+          var ci = 0;
+          sorted.forEach(function (p, i) {
+            items.push(pinNode(p));
+            if (state.quotes && (i % 2 === 1) && ci < CARDS.length) items.push(cardNode(CARDS[ci++]));
+          });
+          if (state.quotes) {
+            var minCards = pins.length ? 2 : 5;
+            while (ci < Math.min(CARDS.length, Math.max(minCards, ci))) items.push(cardNode(CARDS[ci++]));
+          }
+          var add = el('div', 'pin pin--add');
+          var ab = el('button', null, '+ Add image');
+          ab.addEventListener('click', openPinSheet);
+          add.appendChild(ab);
+          items.push(add);
+          items.forEach(function (n) { m.appendChild(n); });
+          renderCoverPhoto();
+        }
+        function cardNode(c) {
+          var d = el('div', 'pin card ' + c.cls);
+          d.appendChild(el('span', null, c.text));
+          return d;
+        }
+        function pinNode(p) {
+          var d = el('div', 'pin');
+          var b = el('button', 'pin__hit');
+          b.setAttribute('aria-label', 'Open image');
+          var img = el('img');
+          img.alt = '';
+          img.loading = 'lazy';
+          if (p.w && p.h) img.style.aspectRatio = p.w + ' / ' + p.h;
+          img.src = pinSrc(p);
+          b.appendChild(img);
+          b.addEventListener('click', function () { openViewer(p); });
+          d.appendChild(b);
+          return d;
+        }
+        function renderCoverPhoto() {
+          var cover = $('#cover');
+          var media = $('#coverMedia');
+          media.textContent = '';
+          if (!state.coverPhotos || !pins.length) { cover.classList.remove('has-photo'); return; }
+          var sorted = pins.slice().sort(function (a, b) { return a.t - b.t; });
+          var p = sorted[dayOfYear(new Date()) % sorted.length];
+          var img = el('img');
+          img.alt = '';
+          img.src = pinSrc(p);
+          media.appendChild(img);
+          cover.classList.add('has-photo');
+        }
+
+        function loadImageFile(file) {
+          return new Promise(function (res, rej) {
+            var url = URL.createObjectURL(file);
+            var im = new Image();
+            im.onload = function () { URL.revokeObjectURL(url); res(im); };
+            im.onerror = function () { URL.revokeObjectURL(url); rej(new Error('bad image')); };
+            im.src = url;
+          });
+        }
+        function shrink(im) {
+          var max = 1400;
+          var w = im.naturalWidth || im.width, h = im.naturalHeight || im.height;
+          var sc = Math.min(1, max / Math.max(w, h));
+          var cw = Math.max(1, Math.round(w * sc)), ch = Math.max(1, Math.round(h * sc));
+          var c = document.createElement('canvas');
+          c.width = cw; c.height = ch;
+          c.getContext('2d').drawImage(im, 0, 0, cw, ch);
+          return new Promise(function (res) { c.toBlob(function (b) { res({ blob: b, w: cw, h: ch }); }, 'image/jpeg', 0.86); });
+        }
+        function addFiles(files) {
+          if (!idb.ok) { toast('This browser cannot store images.'); return; }
+          var list = Array.prototype.slice.call(files);
+          if (!list.length) return;
+          toast(list.length === 1 ? 'Adding image…' : 'Adding ' + list.length + ' images…');
+          var chain = Promise.resolve();
+          var added = 0;
+          list.forEach(function (f) {
+            chain = chain.then(function () {
+              return loadImageFile(f).then(shrink).then(function (r) {
+                if (!r.blob) throw new Error('encode');
+                var p = { id: uid(), kind: 'blob', blob: r.blob, w: r.w, h: r.h, t: Date.now() + added };
+                return idb.put(p).then(function () { pins.push(p); added++; });
+              }).catch(function () {});
+            });
+          });
+          chain.then(function () {
+            renderBoard(summary());
+            toast(added ? (added === 1 ? 'Added to the board' : added + ' added to the board') : 'That file did not load as an image.');
+          });
+        }
+        function addUrl(url) {
+          if (!idb.ok) { toast('This browser cannot store images.'); return; }
+          url = (url || '').trim();
+          if (!/^https?:\/\//i.test(url)) { toast('Paste a full link starting with https://'); return; }
+          var im = new Image();
+          im.onload = function () {
+            var p = { id: uid(), kind: 'url', url: url, w: im.naturalWidth, h: im.naturalHeight, t: Date.now() };
+            idb.put(p).then(function () { pins.push(p); renderBoard(summary()); closeSheets(); toast('Added to the board'); });
+          };
+          im.onerror = function () { toast('That link did not load as an image.'); };
+          im.src = url;
+        }
+
+        /* Viewer */
+        var viewing = null;
+        function openViewer(p) {
+          viewing = p;
+          var v = $('#viewer');
+          $('#viewerImg').src = pinSrc(p);
+          setText($('#viewerMeta'), 'Added ' + shortDate(new Date(p.t)));
+          v.hidden = false;
+          document.body.classList.add('locked');
+        }
+        function closeViewer() {
+          $('#viewer').hidden = true;
+          $('#viewerImg').removeAttribute('src');
+          viewing = null;
+          document.body.classList.remove('locked');
+        }
+        $('#viewerClose').addEventListener('click', closeViewer);
+        $('#viewerRemove').addEventListener('click', function () {
+          if (!viewing) return;
+          var p = viewing;
+          idb.del(p.id).then(function () {
+            pins = pins.filter(function (q) { return q.id !== p.id; });
+            if (urlCache[p.id]) { URL.revokeObjectURL(urlCache[p.id]); delete urlCache[p.id]; }
+            closeViewer();
+            renderBoard(summary());
+            toast('Removed');
+          });
+        });
+
+        /* ------------------------------------------------------------
+           Sheets
+           ------------------------------------------------------------ */
+        function openSheet(id) {
+          closeSheets(true);
+          var s = $('#' + id);
+          s.hidden = false;
+          document.body.classList.add('locked');
+          requestAnimationFrame(function () { requestAnimationFrame(function () { s.classList.add('is-open'); }); });
+        }
+        function closeSheets(silent) {
+          $$('.sheet').forEach(function (s) {
+            if (s.hidden) return;
+            s.classList.remove('is-open');
+            if (silent || reduceMotion) s.hidden = true;
+            else setTimeout(function () { s.hidden = true; }, 300);
+          });
+          document.body.classList.remove('locked');
+        }
+        $$('[data-close]').forEach(function (b) { b.addEventListener('click', function () { closeSheets(); }); });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') { closeSheets(); if (viewing) closeViewer(); }
+        });
+
+        /* Weigh-in */
+        var editingKey = null;
+        function openLog(key) {
+          editingKey = key || todayKey();
+          var d = dateOf(editingKey);
+          var isToday = editingKey === todayKey();
+          setText($('#logTitle'), isToday ? 'Today' : longDate(d));
+          var di = $('#dateInput');
+          di.value = editingKey;
+          di.max = todayKey();
+          setText($('#weighUnit'), state.unit);
+          var inp = $('#weightInput');
+          var existing = state.entries[editingKey];
+          var s = series();
+          if (existing != null) inp.value = fmtW(existing);
+          else if (s.length) inp.value = fmtW(s[s.length - 1].kg);
+          else inp.value = '';
+          $('#deleteEntry').hidden = existing == null;
+          var gf = $('#goalField');
+          gf.hidden = !(state.goalKg == null && !s.length);
+          $('#goalInputFirst').value = '';
+          openSheet('logSheet');
+          if (!existing && !s.length) setTimeout(function () { inp.focus(); }, 320);
+        }
+        $('#logBtn').addEventListener('click', function () { openLog(); });
+        $('#dateInput').addEventListener('change', function () {
+          var v = $('#dateInput').value;
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return;
+          if (v > todayKey()) { $('#dateInput').value = todayKey(); v = todayKey(); }
+          editingKey = v;
+          var existing = state.entries[v];
+          setText($('#logTitle'), v === todayKey() ? 'Today' : longDate(dateOf(v)));
+          if (existing != null) $('#weightInput').value = fmtW(existing);
+          $('#deleteEntry').hidden = existing == null;
+        });
+        function stepWeight(delta) {
+          var inp = $('#weightInput');
+          var v = parseNum(inp.value);
+          if (isNaN(v)) {
+            var s = series();
+            v = s.length ? toUnit(s[s.length - 1].kg) : (state.unit === 'lb' ? 180 : 80);
+          }
+          inp.value = (Math.round((v + delta) * 10) / 10).toFixed(1);
+        }
+        $('#stepDown').addEventListener('click', function () { stepWeight(-0.1); });
+        $('#stepUp').addEventListener('click', function () { stepWeight(0.1); });
+        $('#weightInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') saveEntry(); });
+
+        function validWeight(v) {
+          if (isNaN(v)) return false;
+          return state.unit === 'lb' ? v >= 40 && v <= 900 : v >= 18 && v <= 410;
+        }
+        function saveEntry() {
+          var v = parseNum($('#weightInput').value);
+          if (!validWeight(v)) { toast('Enter a weight in ' + state.unit); return; }
+          var before = summary();
+          var kg = roundKg(fromUnit(v));
+          state.entries[editingKey] = kg;
+          var gf = $('#goalField');
+          if (!gf.hidden) {
+            var g = parseNum($('#goalInputFirst').value);
+            if (validWeight(g)) state.goalKg = roundKg(fromUnit(g));
+          }
+          save();
+          closeSheets();
+          var after = summary();
+          render();
+          if (!reduceMotion) { var hw = $('#heroWrap'); hw.classList.remove('pop'); void hw.offsetWidth; hw.classList.add('pop'); }
+          if (editingKey === todayKey()) {
+            if (after.isNewBest && after.n > 1) toast('✦ New best');
+            else if (after.pct != null && after.pct >= 1 && (before.pct == null || before.pct < 1)) toast('✦ Goal reached');
+            else toast('Logged');
+          } else toast('Saved');
+        }
+        $('#saveEntry').addEventListener('click', saveEntry);
+        $('#deleteEntry').addEventListener('click', function () {
+          delete state.entries[editingKey];
+          save();
+          closeSheets();
+          render();
+          toast('Removed');
+        });
+
+        /* Add to board */
+        function openPinSheet() { $('#urlInput').value = ''; openSheet('pinSheet'); }
+        $('#addPin').addEventListener('click', openPinSheet);
+        $('#pickPhotos').addEventListener('click', function () { $('#fileInput').click(); });
+        $('#fileInput').addEventListener('change', function (e) {
+          var files = e.target.files;
+          closeSheets();
+          addFiles(files);
+          e.target.value = '';
+        });
+        $('#addUrl').addEventListener('click', function () { addUrl($('#urlInput').value); });
+        $('#urlInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') addUrl($('#urlInput').value); });
+
+        /* Settings */
+        function openSettings() {
+          $$('#unitSeg button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-unit') === state.unit); });
+          $$('#lookSeg button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-look') === state.look); });
+          $('#goalInput').value = state.goalKg != null ? fmtW(state.goalKg) : '';
+          $('#startInput').value = state.startKg != null ? fmtW(state.startKg) : '';
+          $('#nameInput').value = state.name || '';
+          $('#swMono').setAttribute('aria-checked', String(!!state.mono));
+          $('#swCover').setAttribute('aria-checked', String(!!state.coverPhotos));
+          $('#swQuotes').setAttribute('aria-checked', String(!!state.quotes));
+          $('#backupBox').hidden = true;
+          openSheet('settingsSheet');
+        }
+        $('#openSettings').addEventListener('click', openSettings);
+        $$('#unitSeg button').forEach(function (b) {
+          b.addEventListener('click', function () {
+            state.unit = b.getAttribute('data-unit');
+            save();
+            openSettings();
+            render();
+          });
+        });
+        $$('#lookSeg button').forEach(function (b) {
+          b.addEventListener('click', function () {
+            state.look = b.getAttribute('data-look');
+            document.documentElement.setAttribute('data-look', state.look);
+            var tc = $('meta[name="theme-color"]');
+            if (tc) tc.setAttribute('content', state.look === 'bone' ? '#f1ede4' : '#0a0a0a');
+            save();
+            $$('#lookSeg button').forEach(function (x) { x.classList.toggle('on', x === b); });
+            renderChart(summary());
+          });
+        });
+        function bindNumberField(id, prop) {
+          var inp = $(id);
+          function commit() {
+            var v = parseNum(inp.value);
+            if (inp.value.trim() === '') state[prop] = null;
+            else if (validWeight(v)) state[prop] = roundKg(fromUnit(v));
+            else { toast('Enter a weight in ' + state.unit); return; }
+            save();
+            render();
+          }
+          inp.addEventListener('change', commit);
+          inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { commit(); inp.blur(); } });
+        }
+        bindNumberField('#goalInput', 'goalKg');
+        bindNumberField('#startInput', 'startKg');
+        $('#nameInput').addEventListener('change', function () { state.name = $('#nameInput').value.trim().slice(0, 40); save(); render(); });
+        function bindSwitch(id, prop) {
+          var sw = $(id);
+          sw.addEventListener('click', function () {
+            state[prop] = !state[prop];
+            sw.setAttribute('aria-checked', String(!!state[prop]));
+            save();
+            renderBoard(summary());
+          });
+        }
+        bindSwitch('#swMono', 'mono');
+        bindSwitch('#swCover', 'coverPhotos');
+        bindSwitch('#swQuotes', 'quotes');
+
+        /* Backup */
+        function backupText() {
+          return JSON.stringify({
+            app: 'form',
+            version: 1,
+            exportedAt: new Date().toISOString(),
+            unit: state.unit,
+            goalKg: state.goalKg,
+            startKg: state.startKg,
+            name: state.name,
+            entries: state.entries
+          }, null, 1);
+        }
+        $('#exportBtn').addEventListener('click', function () {
+          var txt = backupText();
+          var box = $('#backupBox');
+          box.hidden = false;
+          $('#backupText').value = txt;
+          try {
+            var blob = new Blob([txt], { type: 'application/json' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'form-backup-' + todayKey() + '.json';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+          } catch (e) {}
+          toast('Backup ready below');
+        });
+        $('#copyBackup').addEventListener('click', function () {
+          var txt = $('#backupText').value;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(txt).then(function () { toast('Copied'); }, function () { toast('Select the text and copy it'); });
+          } else { $('#backupText').select(); toast('Select the text and copy it'); }
+        });
+        $('#importBtn').addEventListener('click', function () {
+          var box = $('#backupBox');
+          box.hidden = false;
+          $('#backupText').value = '';
+          $('#backupText').placeholder = 'Paste a backup here, then tap Restore.';
+          $('#backupText').focus();
+        });
+        $('#restoreBackup').addEventListener('click', function () {
+          var txt = $('#backupText').value.trim();
+          var data;
+          try { data = JSON.parse(txt); } catch (e) { toast('That is not a backup'); return; }
+          if (!data || typeof data !== 'object' || !data.entries || typeof data.entries !== 'object') { toast('That is not a backup'); return; }
+          var clean = {};
+          for (var k in data.entries) {
+            var v = Number(data.entries[k]);
+            if (/^\d{4}-\d{2}-\d{2}$/.test(k) && isFinite(v) && v > 15 && v < 420) clean[k] = v;
+          }
+          state.entries = clean;
+          if (data.unit === 'lb' || data.unit === 'kg') state.unit = data.unit;
+          state.goalKg = isFinite(Number(data.goalKg)) && data.goalKg != null ? Number(data.goalKg) : null;
+          state.startKg = isFinite(Number(data.startKg)) && data.startKg != null ? Number(data.startKg) : null;
+          if (typeof data.name === 'string') state.name = data.name.slice(0, 40);
+          state.sample = false;
+          save();
+          closeSheets();
+          render();
+          toast('Restored ' + Object.keys(clean).length + ' entries');
+        });
+        $('#resetBtn').addEventListener('click', function () {
+          if (!window.confirm('Erase every entry and board image on this device?')) return;
+          var look = state.look;
+          state = JSON.parse(JSON.stringify(DEFAULTS));
+          state.look = look;
+          save();
+          idb.clear().then(function () {
+            pins = [];
+            closeSheets();
+            render();
+            toast('Erased');
+          });
+        });
+
+        /* ------------------------------------------------------------
+           Sample data, so the page can be seen working before day one.
+           ------------------------------------------------------------ */
+        function loadSample() {
+          var days = 44, start = 196.4;
+          var skip = { 9: 1, 10: 1, 23: 1, 31: 1 };
+          var e = {};
+          for (var i = days; i >= 0; i--) {
+            var t = days - i;
+            if (skip[t]) continue;
+            var base = start - 7.6 * (1 - Math.exp(-t / 26));
+            var noise = Math.sin(t * 1.7) * 0.55 + Math.cos(t * 0.9) * 0.45 + (((t * 7919) % 13) / 13 - 0.5) * 0.7;
+            if (t === days) noise = -0.9;
+            e[keyOf(addDays(new Date(), -i))] = roundKg(lbToKg(Math.round((base + noise) * 10) / 10));
+          }
+          state.entries = e;
+          state.unit = 'lb';
+          state.goalKg = roundKg(lbToKg(178));
+          state.startKg = null;
+          state.sample = true;
+          save();
+          render();
+        }
+        $('#sampleBtn').addEventListener('click', loadSample);
+        $('#clearSample').addEventListener('click', function () {
+          state.entries = {};
+          state.goalKg = null;
+          state.startKg = null;
+          state.sample = false;
+          save();
+          render();
+          toast('Cleared');
+        });
+
+        /* ------------------------------------------------------------
+           Toast, install hint, service worker, start
+           ------------------------------------------------------------ */
+        var toastTimer;
+        function toast(msg) {
+          var t = $('#toast');
+          t.textContent = msg;
+          t.classList.add('show');
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+        }
+
+        (function installHint() {
+          var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+          var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+          var onSite = location.pathname.indexOf('/form') === 0;
+          if (standalone || !isIOS || !onSite || state.hints.install) return;
+          $('#installHint').hidden = false;
+          $('#dismissHint').addEventListener('click', function () {
+            state.hints.install = true;
+            save();
+            $('#installHint').hidden = true;
+          });
+        })();
+
+        if ('serviceWorker' in navigator && location.pathname.indexOf('/form') === 0 && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/form-sw.js', { scope: '/form' }).catch(function () {});
+          });
+        }
+
+        var qs = new URLSearchParams(location.search);
+        if (qs.get('sample') === '1' && !Object.keys(state.entries).length) loadSample();
+
+        render();
+        idb.open().then(function (ok) {
+          if (!ok) return;
+          return idb.all().then(function (all) { pins = all || []; renderBoard(summary()); });
+        }).catch(function () {});
+      })();
+    </script>
+  </body>
+</html>
