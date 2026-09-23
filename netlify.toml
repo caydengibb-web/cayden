@@ -1,11 +1,20 @@
+# Real Reach Content. A static site: index.html, styles.css, main.js and /assets.
+# No build step. Netlify serves the repository root as-is.
 [build]
-  command = "npm run build"
-  publish = "dist"
+  publish = "."
+  command = "echo static site, no build step"
 
-[build.environment]
-  NODE_VERSION = "22"
+# Old Astro routes. Ads may still point at /call, and Calendly may still redirect to /booked.
+[[redirects]]
+  from = "/call"
+  to = "/#call"
+  status = 301
 
-# Security headers for every page.
+[[redirects]]
+  from = "/booked"
+  to = "/"
+  status = 301
+
 [[headers]]
   for = "/*"
   [headers.values]
@@ -14,32 +23,10 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-    Cross-Origin-Opener-Policy = "same-origin"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.facebook.com https://i.vimeocdn.com; font-src 'self'; media-src 'self'; frame-src https://player.vimeo.com https://calendly.com https://*.calendly.com; connect-src 'self' https:; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://assets.calendly.com; style-src 'self' 'unsafe-inline' https://assets.calendly.com; img-src 'self' data: https:; font-src 'self' data:; media-src 'self' blob:; frame-src https://calendly.com https://*.calendly.com; connect-src 'self' https://calendly.com https://*.calendly.com; form-action 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
 
-# Ad landing page and thank-you page stay out of search.
+# Media and fonts change rarely. A week of caching keeps replacements visible within a few days.
 [[headers]]
-  for = "/call"
+  for = "/assets/*"
   [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-
-[[headers]]
-  for = "/booked"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-
-# Fonts and video never change once shipped. Cache them for a year.
-[[headers]]
-  for = "/fonts/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/video/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/_astro/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "public, max-age=604800"
