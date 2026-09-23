@@ -219,7 +219,7 @@ h2 + .lede, h1 + .lede { margin-top: 26px; }
 .nav-menu span:nth-child(2) { top: 24px; }
 .nav.is-open .nav-menu span:nth-child(1) { top: 20px; transform: rotate(45deg); }
 .nav.is-open .nav-menu span:nth-child(2) { top: 20px; transform: rotate(-45deg); }
-.menu { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0; background: #050505; padding: 40px var(--gut); display: flex; flex-direction: column; gap: 6px; overflow: auto; }
+.menu { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0; z-index: 9350; background: #050505; padding: 40px var(--gut); display: flex; flex-direction: column; gap: 6px; overflow: auto; }
 .menu[hidden] { display: none; }
 .menu a { padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, .08); color: #fff; font-size: 22px; font-weight: 500; letter-spacing: -.01em; }
 .menu .menu-cta { margin-top: 20px; border: 0; color: var(--accent); }
